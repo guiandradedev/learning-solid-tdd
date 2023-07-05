@@ -16,6 +16,7 @@ describe("Create Submission", async () => {
      * - O owner Id não pode responder ao quiz ✓
      * - Não podem haver respostas em branco ✓
      * - A resposta deve ser entre 0 e o maximo de respostas -1 ✓
+     * - Deve retornar um array binario correctAnswers com respostas corretas ✓
      */
 
     const usersRepository = new InMemoryUsersRepository();
@@ -70,7 +71,7 @@ describe("Create Submission", async () => {
         const submission = await sut.execute({
             userId: user2.id,
             quizId: quiz1.id,
-            answers: [1, 1, 1]
+            answers: [0, 3, 1]
         })
 
         expect(submission).toBeInstanceOf(Submission)

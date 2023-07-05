@@ -14,4 +14,12 @@ export class InMemorySubmissionsRepository implements ISubmissionRepository {
     async create(submission: Submission): Promise<void> {
         this.submissions.push(submission)
     }
+
+    async findByUser(userId: string): Promise<Submission[] | null> {
+        const submissions = this.submissions.filter((q)=>q.props.userId == userId)
+
+        if(submissions.length == 0) return null
+
+        return submissions;
+    }
 }

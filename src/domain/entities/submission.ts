@@ -4,6 +4,8 @@ type SubmissionProps = {
     userId: string,
     quizId: string,
     answers: number[],
+    correctAnswers: number[], //binary array
+    grade: number,
     createdAt?: Date
 }
 

@@ -1,7 +1,7 @@
 import { Entity } from "../../core/domain/Entity";
 import { QuestionProps } from "./question";
 
-type QuizProps = {
+export type QuizProps = {
     title: string,
     createdAt?: Date,
     owner: string

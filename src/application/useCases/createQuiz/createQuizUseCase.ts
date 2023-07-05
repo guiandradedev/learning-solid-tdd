@@ -1,5 +1,5 @@
 import { Question } from "../../../domain/entities/question";
-import { Quiz } from "../../../domain/entities/quiz";
+import { Quiz, QuizProps } from "../../../domain/entities/quiz";
 import { IQuestionRepository } from "../../repositories/IQuestionRepository";
 import { IQuizRepository } from "../../repositories/IQuizRepository";
 import { QuestionProps as IQuestion } from '../../../domain/entities/question'
@@ -10,10 +10,8 @@ type QuestionProps = {
     answers: string[]
     correctAnswer: number
 }
-type CreateQuizProps = {
-    title: string,
+export interface CreateQuizProps extends QuizProps {
     questions: QuestionProps[],
-    owner: string
 }
 
 export class CreateQuizUseCase {
