@@ -1,0 +1,128 @@
+import { test, it, expect, describe } from "vitest";
+import { CreateQuizUseCase } from "./createQuizUseCase";
+import { Quiz } from "../../../domain/entities/quiz";
+import { InMemoryQuizRepository } from "../../../tests/repositories/in-memory-quiz-repository";
+import { InMemoryQuestionsRepository } from "../../../tests/repositories/in-memory-question-repository";
+import { InMemoryUsersRepository } from "../../../tests/repositories/in-memory-user-repository";
+import { CreateUserUseCase } from "../createUser/createUserUseCase";
+import { IQuizRepository } from "../../repositories/IQuizRepository";
+import { IQuestionRepository } from "../../repositories/IQuestionRepository";
+
+/*
+ * Regras de Negócio:
+ * O usuario deve existir ✓
+ * Um usuario pode criar um quiz, ✓
+ * Um quiz deve ter ao menos uma pergunta✓
+ * Cada pergunta deve ter ao menos duas respostas✓
+ * A resposta correta deve ser entre 0->total de respostas-1 ✓
+ */
+
+describe("Quiz", async () => {
+    const usersRepository = new InMemoryUsersRepository()
+    const sut = new CreateUserUseCase(usersRepository)
+
+    const user1 = await sut.execute({
+        email: "flaamer@gmail.com",
+        name: "Guilherme"
+    })
+
+    const makeSut = (): { sut: CreateQuizUseCase, quizRepository: IQuizRepository, questionsRepository: IQuestionRepository } => {
+        const quizRepository = new InMemoryQuizRepository()
+        const questionsRepository = new InMemoryQuestionsRepository()
+        const sut = new CreateQuizUseCase(quizRepository, questionsRepository, usersRepository)
+
+        return { sut, quizRepository, questionsRepository }
+    }
+
+    it('user should create a quiz', async () => {
+        const { sut } = makeSut()
+
+        const quiz = await sut.execute({
+            title: "Quiz",
+            questions: [
+                {
+                    question: "Qual a raiz de 64",
+                    answers: ["2", "4", "6", "8"],
+                    correctAnswer: 3,
+                }
+            ],
+            owner: user1.id
+        })
+
+        expect(quiz).toBeInstanceOf(Quiz)
+    })
+
+    it('should not create if does not have any questions', async () => {
+        const { sut } = makeSut()
+
+        expect(async () => await sut.execute({
+            title: "Quiz",
+            questions: [],
+            owner: user1.id
+        })).rejects.toBeInstanceOf(Error)
+    })
+
+    it('should throw an error if at least one question does not have at least two answers', async () => {
+        const { sut } = makeSut()
+
+        const dataObj = {
+            title: "Quiz",
+            questions: [
+                {
+                    question: "Qual a raiz de 16",
+                    answers: ["4"],
+                    correctAnswer: 0
+                },
+                {
+                    question: "Qual a raiz de 64",
+                    answers: ["2", "4", "6", "8"],
+                    correctAnswer: 3,
+                }
+            ],
+            owner: user1.id
+        }
+
+        expect(async () => await sut.execute(dataObj)).rejects.toThrowError("Questions should have at least two answers");
+        expect(async () => await sut.execute(dataObj)).not.toBeInstanceOf(Quiz)
+    })
+
+    it('should throw an error the correct answer > answers.length -1 or answer < 0', async () => {
+        const { sut } = makeSut()
+
+        const dataObj = {
+            title: "Quiz",
+            questions: [
+                {
+                    question: "Qual a raiz de 16",
+                    answers: ["4", "5"],
+                    correctAnswer: 3
+                },
+
+            ],
+            owner: user1.id
+        }
+
+        expect(async () => await sut.execute(dataObj)).rejects.toThrowError("Correct answer must be between 0 and maximum length -1");
+    })
+
+    it('should throw an error if ownerId does not exists', async () => {
+        const { sut } = makeSut()
+
+        const dataObj = {
+            title: "Quiz",
+            questions: [
+                {
+                    question: "Qual a raiz de 16",
+                    answers: ["4", "5"],
+                    correctAnswer: 0
+                },
+
+            ],
+            owner: "fake_user_id"
+        }
+
+        expect(async () => await sut.execute(dataObj)).rejects.toThrowError("User does not exists");
+
+    })
+
+})
