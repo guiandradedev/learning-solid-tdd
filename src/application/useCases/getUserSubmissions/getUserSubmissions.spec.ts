@@ -7,13 +7,21 @@ import { InMemoryQuizRepository } from "../../../tests/repositories/in-memory-qu
 import { InMemoryQuestionsRepository } from "../../../tests/repositories/in-memory-question-repository";
 import { CreateQuizUseCase } from "../createQuiz/createQuizUseCase";
 import { Submission } from "../../../domain/entities/submission";
-import { GetUserGradesUseCase } from "./getUserGradesUseCase";
+import { GetUserSubmissionsUseCase } from "./getUserSubmissionsUseCase";
 import { User } from "../../../domain/entities/user";
 
-describe("Get user grades", () => {
+/*
+ * Regras de Négocios
+ * - Retornar as submissoes do usuário
+ * - Deve trazer um erro caso o usuário não exista
+ * - Deve trazer um erro caso o usúario não tenha feito testes
+ * 
+ */
+
+describe("Get user submissions", () => {
 
     type returnSut = {
-        sut: GetUserGradesUseCase,
+        sut: GetUserSubmissionsUseCase,
         SubmissionsInMemoryRepository: InMemorySubmissionsRepository,
         user: User[],
     }
@@ -66,7 +74,7 @@ describe("Get user grades", () => {
             quizId: quiz.id,
             answers: [0, 3, 1]
         })
-        const sut = new GetUserGradesUseCase(SubmissionsInMemoryRepository, usersRepository)
+        const sut = new GetUserSubmissionsUseCase(SubmissionsInMemoryRepository, usersRepository)
 
         return { sut, SubmissionsInMemoryRepository, user: [user1, user2] }
     }
@@ -82,7 +90,7 @@ describe("Get user grades", () => {
     })
 
     it('should throw an error if user does not exists', async () => {
-        const {sut} = await makeSut()
+        const { sut } = await makeSut()
 
         expect(async () => await sut.execute({
             userId: 'fake_user_id'

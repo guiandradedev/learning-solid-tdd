@@ -5,7 +5,7 @@ type GetUserRequest = {
     userId: string
 }
 
-export class GetUserGradesUseCase {
+export class GetUserSubmissionsUseCase {
     constructor(
         private submissionsRepository: ISubmissionRepository,
         private usersRepository: IUsersRepository

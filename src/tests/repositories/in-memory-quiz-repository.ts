@@ -1,4 +1,4 @@
-import { IQuizRepository } from "../../application/repositories/IQuizRepository";
+import { IQuizRepository, QuizRequestRepository } from "../../application/repositories/IQuizRepository";
 import { Quiz } from "../../domain/entities/quiz";
 
 export class InMemoryQuizRepository implements IQuizRepository {
@@ -14,6 +14,20 @@ export class InMemoryQuizRepository implements IQuizRepository {
         if(!quiz) return null;
 
         return quiz;
+    }
+
+    async list(request?: QuizRequestRepository): Promise<Quiz[] | null> {
+        if(this.quizzes.length == 0) return null;
+
+        // if(request) {
+        //     const options = Object.entries(request.include)
+            
+        //     for(const [index, option] of options.entries()) {
+        //         console.log(index)
+        //     }
+        // }
+
+        return this.quizzes
     }
 
 }
