@@ -1,3 +1,6 @@
+import 'dotenv/config'
+import 'reflect-metadata'
+
 import { describe, expect, it } from "vitest";
 import { InMemorySubmissionsRepository } from "../../../tests/repositories/in-memory-submission-repository";
 import { CreateSubmissionUseCase } from "../createSubmission/createSubmissionUseCase";
@@ -9,6 +12,7 @@ import { CreateQuizUseCase } from "../createQuiz/createQuizUseCase";
 import { Submission } from "../../../domain/entities/submission";
 import { GetUserSubmissionsUseCase } from "./getUserSubmissionsUseCase";
 import { User } from "../../../domain/entities/user";
+import { InMemoryUserTokenRepository } from '../../../tests/repositories/in-memory-user-token-repository';
 
 /*
  * Regras de Négocios
@@ -28,16 +32,19 @@ describe("Get user submissions", () => {
 
     const makeSut = async (): Promise<returnSut> => {
         const usersRepository = new InMemoryUsersRepository();
-        const sutUser = new CreateUserUseCase(usersRepository)
+        const userTokenRepository = new InMemoryUserTokenRepository()
+        const sutUser = new CreateUserUseCase(usersRepository, userTokenRepository)
 
         const user1 = await sutUser.execute({
             email: "flaamer@gmail.com",
-            name: "flaamer"
+            name: "flaamer",
+            password: "teste123"
         })
 
         const user2 = await sutUser.execute({
             email: "flaamer1@gmail.com",
-            name: "flaamer"
+            name: "flaamer",
+            password: "teste123"
         })
 
         const QuizRepository = new InMemoryQuizRepository();
@@ -46,7 +53,7 @@ describe("Get user submissions", () => {
 
         const quiz = await sutQuiz.execute({
             title: "Matemática Básica",
-            owner: user1.id,
+            ownerId: user1.id,
             questions: [
                 {
                     question: "Qual a raiz de 16",
@@ -64,6 +71,7 @@ describe("Get user submissions", () => {
                     correctAnswer: 2,
                 }
             ],
+            createdAt: new Date()
         })
 
         const SubmissionsInMemoryRepository = new InMemorySubmissionsRepository()

@@ -1,10 +1,9 @@
 import { Entity } from "../../core/domain/Entity";
-import { QuestionProps } from "./question";
 
 export type QuizProps = {
     title: string,
-    createdAt?: Date,
-    owner: string
+    createdAt: Date,
+    ownerId: string
 }
 
 export class Quiz extends Entity<QuizProps> {
@@ -13,7 +12,7 @@ export class Quiz extends Entity<QuizProps> {
     }
 
     public static create(props: QuizProps, id?: string) {
-        const quiz = new Quiz({...props, createdAt: props.createdAt ?? new Date()}, id);
+        const quiz = new Quiz(props, id);
 
         return quiz;
     }

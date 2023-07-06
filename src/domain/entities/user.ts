@@ -3,6 +3,7 @@ import { Entity } from "../../core/domain/Entity";
 type UserProps = {
     name: string,
     email: string,
+    password: string
 }
 
 export class User extends Entity<UserProps> {

@@ -1,4 +1,7 @@
-import { test, it, expect, describe } from "vitest";
+import 'reflect-metadata'
+import 'dotenv/config'
+
+import { it, expect, describe } from "vitest";
 import { CreateQuizUseCase } from "./createQuizUseCase";
 import { Quiz } from "../../../domain/entities/quiz";
 import { InMemoryQuizRepository } from "../../../tests/repositories/in-memory-quiz-repository";
@@ -7,6 +10,7 @@ import { InMemoryUsersRepository } from "../../../tests/repositories/in-memory-u
 import { CreateUserUseCase } from "../createUser/createUserUseCase";
 import { IQuizRepository } from "../../repositories/IQuizRepository";
 import { IQuestionRepository } from "../../repositories/IQuestionRepository";
+import { InMemoryUserTokenRepository } from '../../../tests/repositories/in-memory-user-token-repository';
 
 /*
  * Regras de Negócio:
@@ -19,11 +23,13 @@ import { IQuestionRepository } from "../../repositories/IQuestionRepository";
 
 describe("Quiz", async () => {
     const usersRepository = new InMemoryUsersRepository()
-    const sut = new CreateUserUseCase(usersRepository)
+    const userTokenRepository = new InMemoryUserTokenRepository()
+    const sut = new CreateUserUseCase(usersRepository, userTokenRepository)
 
     const user1 = await sut.execute({
         email: "flaamer@gmail.com",
-        name: "Guilherme"
+        name: "Guilherme",
+        password: "teste123"
     })
 
     const makeSut = (): { sut: CreateQuizUseCase, quizRepository: IQuizRepository, questionsRepository: IQuestionRepository } => {
@@ -46,7 +52,8 @@ describe("Quiz", async () => {
                     correctAnswer: 3,
                 }
             ],
-            owner: user1.id
+            ownerId: user1.id,
+            createdAt: new Date()
         })
 
         expect(quiz).toBeInstanceOf(Quiz)
@@ -58,7 +65,8 @@ describe("Quiz", async () => {
         expect(async () => await sut.execute({
             title: "Quiz",
             questions: [],
-            owner: user1.id
+            ownerId: user1.id,
+            createdAt: new Date()
         })).rejects.toBeInstanceOf(Error)
     })
 
@@ -79,7 +87,8 @@ describe("Quiz", async () => {
                     correctAnswer: 3,
                 }
             ],
-            owner: user1.id
+            ownerId: user1.id,
+            createdAt: new Date()
         }
 
         expect(async () => await sut.execute(dataObj)).rejects.toThrowError("Questions should have at least two answers");
@@ -99,7 +108,8 @@ describe("Quiz", async () => {
                 },
 
             ],
-            owner: user1.id
+            ownerId: user1.id,
+            createdAt: new Date()
         }
 
         expect(async () => await sut.execute(dataObj)).rejects.toThrowError("Correct answer must be between 0 and maximum length -1");
@@ -118,7 +128,8 @@ describe("Quiz", async () => {
                 },
 
             ],
-            owner: "fake_user_id"
+            ownerId: "fake_user_id",
+            createdAt: new Date()
         }
 
         expect(async () => await sut.execute(dataObj)).rejects.toThrowError("User does not exists");

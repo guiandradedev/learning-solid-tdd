@@ -1,3 +1,6 @@
+import 'reflect-metadata'
+import 'dotenv/config'
+
 import { describe, expect, it } from "vitest";
 import { InMemoryQuizRepository } from "../../../tests/repositories/in-memory-quiz-repository";
 import { InMemoryQuestionsRepository } from "../../../tests/repositories/in-memory-question-repository";
@@ -8,6 +11,7 @@ import { User } from "../../../domain/entities/user";
 import { CreateUserUseCase } from "../createUser/createUserUseCase";
 import { Quiz } from "../../../domain/entities/quiz";
 import { GetQuizzesUseCase } from "./getQuizzesUseCase";
+import { InMemoryUserTokenRepository } from '../../../tests/repositories/in-memory-user-token-repository';
 
 describe("Get Quizzes", async () => {
     /*
@@ -24,11 +28,13 @@ describe("Get Quizzes", async () => {
 
     const makeSut = async (): Promise<returnSut> => {
         const usersRepository = new InMemoryUsersRepository();
-        const sutUser = new CreateUserUseCase(usersRepository)
+        const userTokenRepository = new InMemoryUserTokenRepository()
+        const sutUser = new CreateUserUseCase(usersRepository, userTokenRepository)
 
         const user1 = await sutUser.execute({
             email: "flaamer@gmail.com",
-            name: "flaamer"
+            name: "flaamer",
+            password: "teste123"
         })
 
         const QuizRepository = new InMemoryQuizRepository();
@@ -37,7 +43,7 @@ describe("Get Quizzes", async () => {
 
         const quiz = await sutQuiz.execute({
             title: "Matemática Básica",
-            owner: user1.id,
+            ownerId: user1.id,
             questions: [
                 {
                     question: "Qual a raiz de 16",
@@ -55,6 +61,7 @@ describe("Get Quizzes", async () => {
                     correctAnswer: 2,
                 }
             ],
+            createdAt: new Date()
         })
 
         const sut = new GetQuizzesUseCase(QuizRepository, QuestionRepository)

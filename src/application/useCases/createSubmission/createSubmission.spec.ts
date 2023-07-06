@@ -1,3 +1,6 @@
+import 'reflect-metadata'
+import 'dotenv/config'
+
 import { describe, expect, it } from "vitest";
 import { InMemoryUsersRepository } from "../../../tests/repositories/in-memory-user-repository";
 import { CreateUserUseCase } from "../createUser/createUserUseCase";
@@ -7,6 +10,7 @@ import { InMemoryQuestionsRepository } from "../../../tests/repositories/in-memo
 import { Submission } from "../../../domain/entities/submission";
 import { InMemorySubmissionsRepository } from "../../../tests/repositories/in-memory-submission-repository";
 import { CreateSubmissionUseCase } from "./createSubmissionUseCase";
+import { InMemoryUserTokenRepository } from '../../../tests/repositories/in-memory-user-token-repository';
 
 describe("Create Submission", async () => {
     /*
@@ -20,16 +24,19 @@ describe("Create Submission", async () => {
      */
 
     const usersRepository = new InMemoryUsersRepository();
-    const sutUser = new CreateUserUseCase(usersRepository)
+    const userTokenRepository = new InMemoryUserTokenRepository()
+    const sutUser = new CreateUserUseCase(usersRepository, userTokenRepository)
 
     const user1 = await sutUser.execute({
         email: "flaamer@gmail.com",
-        name: "flaamer"
+        name: "flaamer",
+        password: "teste123"
     })
 
     const user2 = await sutUser.execute({
         email: "flaamer1@gmail.com",
-        name: "flaamer"
+        name: "flaamer",
+        password: "teste123"
     })
 
     const QuizRepository = new InMemoryQuizRepository();
@@ -38,7 +45,7 @@ describe("Create Submission", async () => {
 
     const quiz1 = await sutQuiz.execute({
         title: "Matemática Básica",
-        owner: user1.id,
+        ownerId: user1.id,
         questions: [
             {
                 question: "Qual a raiz de 16",
@@ -56,6 +63,7 @@ describe("Create Submission", async () => {
                 correctAnswer: 2,
             }
         ],
+        createdAt: new Date()
     })
 
     const makeSut = (): { sut: CreateSubmissionUseCase, SubmissionsInMemoryRepository: InMemorySubmissionsRepository } => {
