@@ -25,7 +25,7 @@ export class CreateSubmissionUseCase {
         const quizExists = await this.quizRepository.findById(quizId)
         if (!quizExists) throw new Error('Quiz does not exists')
 
-        if(quizExists.props.owner == userId) throw new Error('Owner cannot answer his own survey')
+        if(quizExists.props.ownerId == userId) throw new Error('Owner cannot answer his own survey')
 
         const questions = await this.questionsRepository.findByQuizId(quizId)
         if(questions?.length != answers.length) throw new Error('Cannot have blank answers')

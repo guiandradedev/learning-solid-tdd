@@ -1,8 +1,10 @@
+import 'reflect-metadata'
 import { describe, it, expect } from "vitest";
 import { InMemoryUsersRepository } from "../../../tests/repositories/in-memory-user-repository";
 import { CreateUserUseCase } from "./createUserUseCase";
 import { User } from "../../../domain/entities/user";
 import { IUsersRepository } from "../../repositories/IUsersRepository";
+
 
 describe('create an user', () => {
 
@@ -18,7 +20,8 @@ describe('create an user', () => {
 
         const user1 = await sut.execute({
             email: "flaamer@gmail.com",
-            name: "Guilherme"
+            name: "Guilherme",
+            password: "teste123"
         })
 
         expect(user1).toBeInstanceOf(User)
@@ -29,12 +32,14 @@ describe('create an user', () => {
 
         await sut.execute({
             email: "flaamer@gmail.com",
-            name: "Guilherme"
+            name: "Guilherme",
+            password: "teste123"
         })
 
         expect(async () => await sut.execute({
             email: "flaamer@gmail.com",
-            name: "Foguinho"
+            name: "Foguinho",
+            password: "teste123"
         })).rejects.toBeInstanceOf(Error)
     })
 })

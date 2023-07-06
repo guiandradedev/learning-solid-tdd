@@ -1,3 +1,5 @@
+import 'reflect-metadata'
+
 import { describe, expect, it } from "vitest";
 import { InMemoryQuizRepository } from "../../../tests/repositories/in-memory-quiz-repository";
 import { InMemoryQuestionsRepository } from "../../../tests/repositories/in-memory-question-repository";
@@ -28,7 +30,8 @@ describe("Get Quizzes", async () => {
 
         const user1 = await sutUser.execute({
             email: "flaamer@gmail.com",
-            name: "flaamer"
+            name: "flaamer",
+            password: "teste123"
         })
 
         const QuizRepository = new InMemoryQuizRepository();
@@ -37,7 +40,7 @@ describe("Get Quizzes", async () => {
 
         const quiz = await sutQuiz.execute({
             title: "Matemática Básica",
-            owner: user1.id,
+            ownerId: user1.id,
             questions: [
                 {
                     question: "Qual a raiz de 16",
@@ -55,6 +58,7 @@ describe("Get Quizzes", async () => {
                     correctAnswer: 2,
                 }
             ],
+            createdAt: new Date()
         })
 
         const sut = new GetQuizzesUseCase(QuizRepository, QuestionRepository)

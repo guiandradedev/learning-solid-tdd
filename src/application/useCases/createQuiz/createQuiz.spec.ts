@@ -1,4 +1,6 @@
-import { test, it, expect, describe } from "vitest";
+import 'reflect-metadata'
+
+import {  it, expect, describe } from "vitest";
 import { CreateQuizUseCase } from "./createQuizUseCase";
 import { Quiz } from "../../../domain/entities/quiz";
 import { InMemoryQuizRepository } from "../../../tests/repositories/in-memory-quiz-repository";
@@ -23,7 +25,8 @@ describe("Quiz", async () => {
 
     const user1 = await sut.execute({
         email: "flaamer@gmail.com",
-        name: "Guilherme"
+        name: "Guilherme",
+        password: "teste123"
     })
 
     const makeSut = (): { sut: CreateQuizUseCase, quizRepository: IQuizRepository, questionsRepository: IQuestionRepository } => {
@@ -46,7 +49,8 @@ describe("Quiz", async () => {
                     correctAnswer: 3,
                 }
             ],
-            owner: user1.id
+            ownerId: user1.id,
+            createdAt: new Date()
         })
 
         expect(quiz).toBeInstanceOf(Quiz)
@@ -58,7 +62,8 @@ describe("Quiz", async () => {
         expect(async () => await sut.execute({
             title: "Quiz",
             questions: [],
-            owner: user1.id
+            ownerId: user1.id,
+            createdAt: new Date()
         })).rejects.toBeInstanceOf(Error)
     })
 
@@ -79,7 +84,8 @@ describe("Quiz", async () => {
                     correctAnswer: 3,
                 }
             ],
-            owner: user1.id
+            ownerId: user1.id,
+            createdAt: new Date()
         }
 
         expect(async () => await sut.execute(dataObj)).rejects.toThrowError("Questions should have at least two answers");
@@ -99,7 +105,8 @@ describe("Quiz", async () => {
                 },
 
             ],
-            owner: user1.id
+            ownerId: user1.id,
+            createdAt: new Date()
         }
 
         expect(async () => await sut.execute(dataObj)).rejects.toThrowError("Correct answer must be between 0 and maximum length -1");
@@ -118,7 +125,8 @@ describe("Quiz", async () => {
                 },
 
             ],
-            owner: "fake_user_id"
+            ownerId: "fake_user_id",
+            createdAt: new Date()
         }
 
         expect(async () => await sut.execute(dataObj)).rejects.toThrowError("User does not exists");
