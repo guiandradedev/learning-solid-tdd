@@ -1,4 +1,6 @@
 export interface ITokens {
+    refreshToken: string,
     accessToken: string,
-    refreshToken: string
+    refreshTokenExpiresDate: Date,
+    accessTokenExpiresDate: Date,
 }

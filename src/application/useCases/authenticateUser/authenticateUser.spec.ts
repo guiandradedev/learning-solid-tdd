@@ -1,4 +1,5 @@
 import 'reflect-metadata'
+import 'dotenv/config'
 
 import { describe, expect, it } from "vitest";
 import { InMemoryUserTokenRepository } from "../../../tests/repositories/in-memory-user-token-repository";
@@ -6,12 +7,15 @@ import { InMemoryUsersRepository } from "../../../tests/repositories/in-memory-u
 import { User } from "../../../domain/entities/user";
 import { AuthenticateUserUseCase } from "./authenticateUserUseCase";
 import { CreateUserUseCase } from "../createUser/createUserUseCase";
+import { UserToken } from '../../../domain/entities/user-token';
+import jwt from "jsonwebtoken";
+import { TokensReturnsTest } from '../../services/sessionService.spec';
 
 describe('Authentication', async () => {
     const makeSup = () => {
         const usersRepository = new InMemoryUsersRepository();
-        const sutUser = new CreateUserUseCase(usersRepository)
         const userTokenRepository = new InMemoryUserTokenRepository()
+        const sutUser = new CreateUserUseCase(usersRepository, userTokenRepository)
         const sut = new AuthenticateUserUseCase(usersRepository, userTokenRepository)
         
         return {sut, sutUser, usersRepository, userTokenRepository}
@@ -19,7 +23,7 @@ describe('Authentication', async () => {
     it('Authenticate User', async () => {
         const {sutUser, sut} = makeSup();
 
-        const user1 = await sutUser.execute({
+        await sutUser.execute({
             email: "flaamer@gmail.com",
             name: "flaamer",
             password: "teste123"
@@ -57,7 +61,52 @@ describe('Authentication', async () => {
         })).rejects.toThrowError("User or password incorrect")
     })
 
-    it('should return an access and refresh token valids', async () => {
-        
+    it('should return an access and refresh token', async () => {
+        const {sutUser, sut} = makeSup();
+
+        await sutUser.execute({
+            email: "flaamer@gmail.com",
+            name: "flaamer",
+            password: "teste123"
+        })
+
+        const user = await sut.execute({
+            email: "flaamer@gmail.com",
+            password: "teste123"
+        })
+
+        expect(user.token).toBeInstanceOf(UserToken)
+    })
+
+    it('should return an access and refresh token VALIDS', async () => {
+        const {sutUser, sut} = makeSup();
+
+        await sutUser.execute({
+            email: "flaamer@gmail.com",
+            name: "flaamer",
+            password: "teste123"
+        })
+
+        const user = await sut.execute({
+            email: "flaamer@gmail.com",
+            password: "teste123"
+        })
+
+        const verifyAccess = jwt.verify(user.token.props.accessToken, process.env.JWT_ACCESS_TOKEN)
+        expect(verifyAccess).toMatchObject<TokensReturnsTest>({
+            exp: expect.any(Number),
+            iat: expect.any(Number),
+            sub: expect.any(String)
+        })
+        expect(verifyAccess.sub).toEqual(user.id)
+
+        const verifyRefresh = jwt.verify(user.token.props.refreshToken, process.env.JWT_REFRESH_TOKEN)
+        expect(verifyRefresh).toMatchObject<TokensReturnsTest>({
+            exp: expect.any(Number),
+            iat: expect.any(Number),
+            sub: expect.any(String)
+        })
+        expect(verifyRefresh.sub).toEqual(user.id)
+
     })
 })

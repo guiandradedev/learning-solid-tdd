@@ -8,7 +8,7 @@ export class CreateUserController {
     async handle(request: Request, response: Response): Promise<Response> {
         const { name, email, password } = request.body
 
-        if (!name || !email) return response.status(422).json({ errors: "Invalid Data" })
+        if (!name || !email || !password) return response.status(422).json({ errors: "Invalid Data" })
 
         try {
             const createUserUseCase = container.resolve(CreateUserUseCase)

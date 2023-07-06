@@ -1,18 +1,20 @@
 import { Entity } from "../../core/domain/Entity";
 
-type UserProps = {
+type UserTokenProps = {
     refreshToken: string,
-    expiresDate: Date,
+    accessToken: string,
+    refreshTokenExpiresDate: Date,
+    accessTokenExpiresDate: Date,
     createdAt: Date,
     userId: string
 }
 
-export class UserToken extends Entity<UserProps> {
-    private constructor(props: UserProps, id?: string) {
+export class UserToken extends Entity<UserTokenProps> {
+    private constructor(props: UserTokenProps, id?: string) {
         super(props, id)
     }
 
-    public static create(props: UserProps, id?: string) {
+    public static create(props: UserTokenProps, id?: string) {
         const user = new UserToken(props, id);
 
         return user;

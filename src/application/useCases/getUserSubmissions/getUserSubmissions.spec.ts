@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import 'reflect-metadata'
 
 import { describe, expect, it } from "vitest";
@@ -11,6 +12,7 @@ import { CreateQuizUseCase } from "../createQuiz/createQuizUseCase";
 import { Submission } from "../../../domain/entities/submission";
 import { GetUserSubmissionsUseCase } from "./getUserSubmissionsUseCase";
 import { User } from "../../../domain/entities/user";
+import { InMemoryUserTokenRepository } from '../../../tests/repositories/in-memory-user-token-repository';
 
 /*
  * Regras de Négocios
@@ -30,7 +32,8 @@ describe("Get user submissions", () => {
 
     const makeSut = async (): Promise<returnSut> => {
         const usersRepository = new InMemoryUsersRepository();
-        const sutUser = new CreateUserUseCase(usersRepository)
+        const userTokenRepository = new InMemoryUserTokenRepository()
+        const sutUser = new CreateUserUseCase(usersRepository, userTokenRepository)
 
         const user1 = await sutUser.execute({
             email: "flaamer@gmail.com",

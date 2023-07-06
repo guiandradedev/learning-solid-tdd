@@ -1,16 +1,19 @@
+import 'dotenv/config'
 import 'reflect-metadata'
 import { describe, it, expect } from "vitest";
 import { InMemoryUsersRepository } from "../../../tests/repositories/in-memory-user-repository";
 import { CreateUserUseCase } from "./createUserUseCase";
 import { User } from "../../../domain/entities/user";
 import { IUsersRepository } from "../../repositories/IUsersRepository";
+import { InMemoryUserTokenRepository } from '../../../tests/repositories/in-memory-user-token-repository';
 
 
 describe('create an user', () => {
 
     const makeSut = (): { sut: CreateUserUseCase, usersRepository: IUsersRepository } => {
         const usersRepository = new InMemoryUsersRepository()
-        const sut = new CreateUserUseCase(usersRepository)
+        const userTokenRepository = new InMemoryUserTokenRepository()
+        const sut = new CreateUserUseCase(usersRepository,userTokenRepository)
 
         return { sut, usersRepository }
     }
