@@ -41,7 +41,7 @@ describe("Get Quizzes", async () => {
         const QuestionRepository = new InMemoryQuestionsRepository();
         const sutQuiz = new CreateQuizUseCase(QuizRepository, QuestionRepository, usersRepository)
 
-        const quiz = await sutQuiz.execute({
+        await sutQuiz.execute({
             title: "Matemática Básica",
             ownerId: user1.id,
             questions: [
@@ -82,6 +82,18 @@ describe("Get Quizzes", async () => {
         const QuestionRepository = new InMemoryQuestionsRepository();
         const sut = new GetQuizzesUseCase(QuizRepository, QuestionRepository)
 
-        expect(async () => await sut.execute()).rejects.toThrow('Quiz not found');
+        expect(async () => await sut.execute()).not.toBeInstanceOf(Quiz)
+        // expect(async () => await sut.execute()).rejects.not.toEqual(expect.arrayContaining(expect.any(Quiz)));
+        expect(async () => await sut.execute()).rejects.toThrow(
+            expect.objectContaining({
+                title: "ERR_QUIZ_NOT_FOUND"
+            })
+        );
     })
+
+    it('should return all questions', async () => {
+        
+    })
+
+
 })

@@ -1,8 +1,7 @@
-import { IUsersRepository } from "../../../../application/repositories/IUsersRepository";
-import { User } from "../../../../domain/entities/user";
-import { prismaUserToEntity } from "../../../../shared/mappers/Prisma/user-map";
-import { prismaClient } from "../../../../shared/providers/prisma";
-import { User as PrismaUser } from "@prisma/client";
+import { IUsersRepository } from "../../../application/repositories/IUsersRepository";
+import { User } from "../../../domain/entities/user";
+import { prismaUserToEntity } from "../../../shared/mappers/Prisma/user-map";
+import { prismaClient } from "../../../shared/providers/prisma";
 
 export class PrismaUserRepository implements IUsersRepository {
 

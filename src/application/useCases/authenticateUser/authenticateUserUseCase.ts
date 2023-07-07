@@ -5,6 +5,7 @@ import { IUsersRepository } from "../../repositories/IUsersRepository";
 import bcrypt from 'bcrypt'
 import { CreateSession } from "../../services/SessionService";
 import { UserToken } from "../../../domain/entities/user-token";
+import { AppError } from "../../../shared/errors/AppError";
 
 type AuthenticateUserRequest = {
     email: string,
@@ -27,12 +28,10 @@ export class AuthenticateUserUseCase {
     async execute({ email, password }: AuthenticateUserRequest): Promise<UserAuthenticatetedResponse> {
         const user = await this.userRepository.findByEmail(email)
 
-        if (!user) throw new Error("User or password incorrect")
-
-        console.log(user)
+        if (!user) throw new AppError({title: "ERR_USER_INVALID", message: "User or password incorrect", status: 422})
 
         const checkPassword = await bcrypt.compare(password, user.props.password);
-        if (!checkPassword) throw new Error("User or password incorrect")
+        if (!checkPassword) throw new AppError({title: "ERR_USER_INVALID", message: "User or password incorrect", status: 422})
 
         const sessionService = new CreateSession()
         const { accessToken, refreshToken, refreshTokenExpiresDate, accessTokenExpiresDate } = await sessionService.execute(email, user.id)
@@ -45,7 +44,6 @@ export class AuthenticateUserUseCase {
             refreshToken,
             userId: user.id
         })
-
         await this.userTokenRepository.create(userToken)
 
         const userWithToken = Object.assign(user, {token: userToken})

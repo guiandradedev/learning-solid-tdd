@@ -6,6 +6,7 @@ import { CreateUserUseCase } from "./createUserUseCase";
 import { User } from "../../../domain/entities/user";
 import { IUsersRepository } from "../../repositories/IUsersRepository";
 import { InMemoryUserTokenRepository } from '../../../tests/repositories/in-memory-user-token-repository';
+import { AppError } from '../../../shared/errors/AppError';
 
 
 describe('create an user', () => {
@@ -13,7 +14,7 @@ describe('create an user', () => {
     const makeSut = (): { sut: CreateUserUseCase, usersRepository: IUsersRepository } => {
         const usersRepository = new InMemoryUsersRepository()
         const userTokenRepository = new InMemoryUserTokenRepository()
-        const sut = new CreateUserUseCase(usersRepository,userTokenRepository)
+        const sut = new CreateUserUseCase(usersRepository, userTokenRepository)
 
         return { sut, usersRepository }
     }
@@ -39,10 +40,18 @@ describe('create an user', () => {
             password: "teste123"
         })
 
-        expect(async () => await sut.execute({
+        const dataUser = {
             email: "flaamer@gmail.com",
             name: "Foguinho",
             password: "teste123"
-        })).rejects.toBeInstanceOf(Error)
+        }
+
+        expect(async () => await sut.execute(dataUser)).rejects.toBeInstanceOf(AppError)
+        expect(async () => await sut.execute(dataUser)).rejects.toThrow(
+            expect.objectContaining({
+                title: "ERR_USER_ALREADY_EXISTS"
+            })
+        );
+
     })
 })

@@ -1,18 +1,27 @@
 import { Request, Response } from "express";
 import { container } from "tsyringe";
+import { CreateQuizProps, CreateQuizUseCase } from "./createQuizUseCase";
+import { AppError } from "../../../shared/errors/AppError";
 
 export class CreateQuizController {
 
     async handle(request: Request, response: Response): Promise<Response> {
-        const { title, questions, ownerId, createdAt } = request.body
-
-        if (!title || !ownerId || !createdAt || !questions || questions.length == 0) return response.status(422).json({ errors: "Invalid Data" })
+        const { title, questions, ownerId, createdAt }: CreateQuizProps = request.body
 
         try {
-            return response.status(201)
+            const createQuizUseCase = container.resolve(CreateQuizUseCase)
+
+            const quiz = await createQuizUseCase.execute({
+                title,
+                createdAt,
+                ownerId,
+                questions
+            })
+
+            return response.status(201).json(quiz); 
         } catch (error) {
-            if (error instanceof Error) {
-                return response.status(500).json({ errors: error.message })
+            if(error instanceof AppError) {
+                return response.status(500).json({ errors: [error] })
             }
             return response.status(500).json({ errors: "Unknow Error" })
         }

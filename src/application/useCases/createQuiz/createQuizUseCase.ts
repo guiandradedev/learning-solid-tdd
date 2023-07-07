@@ -1,10 +1,10 @@
 import { Question } from "../../../domain/entities/question";
 import { Quiz, QuizProps } from "../../../domain/entities/quiz";
+import { AppError } from "../../../shared/errors/AppError";
 import { IQuestionRepository } from "../../repositories/IQuestionRepository";
 import { IQuizRepository } from "../../repositories/IQuizRepository";
-import { QuestionProps as IQuestion } from '../../../domain/entities/question'
 import { IUsersRepository } from "../../repositories/IUsersRepository";
-import { inject, injectAll, injectable } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 
 type QuestionProps = {
     question: string,
@@ -20,23 +20,23 @@ export class CreateQuizUseCase {
     constructor(
         @inject('QuizRepository')
         private quizRepository: IQuizRepository,
-        @inject('IQuestionRepository')
+        @inject('QuestionRepository')
         private questionsRepository: IQuestionRepository,
         @inject('UsersRepository')
         private usersRepository: IUsersRepository
     ) { }
 
     async execute({ title, questions, ownerId, createdAt }: CreateQuizProps) {
-        if (questions.length == 0) throw new Error("User should add at least one question")
+        if (questions.length == 0) throw new AppError({title: "ERR_INVALID_QUESTIONS", message: "User should add at least one question", status: 500})
 
         for (const q of questions) {
-            if (q.answers.length < 2) throw new Error('Questions should have at least two answers')
-            if(q.correctAnswer > q.answers.length - 1 || q.correctAnswer < 0) throw new Error('Correct answer must be between 0 and maximum length -1')
+            if (q.answers.length < 2) throw new AppError({title: "ERR_NUMBER_INVALID_ANSWERS", message: "Questions should have at least two answers", status: 500})
+            if(q.correctAnswer > q.answers.length - 1 || q.correctAnswer < 0) throw new AppError({title: "ERR_INVALID_ANSWERS", message: "Correct answer must be between 0 and maximum length -1", status: 500})
         }
 
         const userExists = await this.usersRepository.findById(ownerId)
 
-        if(!userExists) throw new Error('User does not exists')
+        if(!userExists) throw new AppError({title: "ERR_USER_NOT_FOUND", message: "User not found", status: 500})
 
         const quizBase = Quiz.create({ title, ownerId, createdAt })
 

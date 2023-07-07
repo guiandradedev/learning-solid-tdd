@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { User } from "../../../domain/entities/user";
 import { container } from "tsyringe";
 import { CreateUserUseCase } from "./createUserUseCase";
+import { AppError } from "../../../shared/errors/AppError";
 
 export class CreateUserController {
 
@@ -21,8 +22,8 @@ export class CreateUserController {
 
             return response.status(201).json(user);
         } catch (error) {
-            if (error instanceof Error) {
-                return response.status(500).json({ errors: error.message })
+            if(error instanceof AppError) {
+                return response.status(500).json({ errors: [error] })
             }
             return response.status(500).json({ errors: "Unknow Error" })
         }

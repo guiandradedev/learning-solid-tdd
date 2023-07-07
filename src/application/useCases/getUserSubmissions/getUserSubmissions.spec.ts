@@ -13,6 +13,7 @@ import { Submission } from "../../../domain/entities/submission";
 import { GetUserSubmissionsUseCase } from "./getUserSubmissionsUseCase";
 import { User } from "../../../domain/entities/user";
 import { InMemoryUserTokenRepository } from '../../../tests/repositories/in-memory-user-token-repository';
+import { AppError } from '../../../shared/errors/AppError';
 
 /*
  * Regras de Négocios
@@ -100,16 +101,32 @@ describe("Get user submissions", () => {
     it('should throw an error if user does not exists', async () => {
         const { sut } = await makeSut()
 
-        expect(async () => await sut.execute({
+        const dataObj = {
             userId: 'fake_user_id'
-        })).rejects.toThrowError("User not found")
+        }
+
+        expect(async () => await sut.execute(dataObj)).not.toBeInstanceOf(Submission)
+        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(AppError)
+        expect(async () => await sut.execute(dataObj)).rejects.toThrow(
+            expect.objectContaining({
+                title: "ERR_USER_NOT_FOUND"
+            })
+        );
     })
 
     it('should throw an error (user does not submit and test)', async () => {
         const { sut, user } = await makeSut()
 
-        expect(async () => await sut.execute({
+        const dataObj = {
             userId: user[0].id
-        })).rejects.toThrowError('Submissions not found')
+        }
+
+        expect(async () => await sut.execute(dataObj)).not.toBeInstanceOf(Submission)
+        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(AppError)
+        expect(async () => await sut.execute(dataObj)).rejects.toThrow(
+            expect.objectContaining({
+                title: "ERR_SUBMISSION_NOT_FOUND"
+            })
+        );
     })
 })

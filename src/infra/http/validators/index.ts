@@ -9,14 +9,15 @@ export const validateRules = (req: Request, res: Response, next: NextFunction) =
         return next()
     }
 
-    if(req.file) {
+    if (req.file) {
         deleteFile(req.file.path)
     }
 
     const errors: IError[] = []
     errorsRequest.array().map(err => {
         errors.push({
-            message: `O campo ${err.msg} é inválido`,
+            message: err.msg,
+            title: "ERR_INVALID_DATA",
             status: 422
         })
     })

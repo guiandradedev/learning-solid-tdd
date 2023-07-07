@@ -4,9 +4,9 @@ type SubmissionProps = {
     userId: string,
     quizId: string,
     answers: number[],
-    correctAnswers: number[], //binary array
+    correctAnswers: boolean[], //binary array
     grade: number,
-    createdAt?: Date
+    createdAt: Date
 }
 
 export class Submission extends Entity<SubmissionProps> {
@@ -15,7 +15,7 @@ export class Submission extends Entity<SubmissionProps> {
     }
 
     public static create(props: SubmissionProps, id?: string) {
-        const submission = new Submission({...props, createdAt: props.createdAt ?? new Date()}, id);
+        const submission = new Submission(props, id);
 
         return submission;
     }

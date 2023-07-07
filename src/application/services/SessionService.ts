@@ -3,6 +3,7 @@ import 'reflect-metadata'
 import dayjs from "dayjs";
 import jwt from "jsonwebtoken";
 import { ITokens } from "../../@types/token.types";
+import { AppError } from '../../shared/errors/AppError';
 
 class CreateSession {
     async execute(email: string, _id: string): Promise<ITokens> {
@@ -29,7 +30,7 @@ class CreateSession {
 
         } catch (error) {
             console.log(error)
-            throw new Error("token")
+            throw new AppError({title: "ERR_CREATE_TOKEN", message: "Error while creating user token", status: 500})
         }
     }
 }

@@ -11,6 +11,7 @@ import { Submission } from "../../../domain/entities/submission";
 import { InMemorySubmissionsRepository } from "../../../tests/repositories/in-memory-submission-repository";
 import { CreateSubmissionUseCase } from "./createSubmissionUseCase";
 import { InMemoryUserTokenRepository } from '../../../tests/repositories/in-memory-user-token-repository';
+import { AppError } from '../../../shared/errors/AppError';
 
 describe("Create Submission", async () => {
     /*
@@ -79,7 +80,7 @@ describe("Create Submission", async () => {
         const submission = await sut.execute({
             userId: user2.id,
             quizId: quiz1.id,
-            answers: [0, 3, 1]
+            answers: [0, 3, 1],
         })
 
         expect(submission).toBeInstanceOf(Submission)
@@ -88,50 +89,92 @@ describe("Create Submission", async () => {
     it('should throw an error (quiz does not exists)', async () => {
         const { sut } = makeSut()
 
-        expect(async () => sut.execute({
+        const dataObj = {
             userId: user2.id,
             quizId: "fake_quiz_id",
-            answers: [0, 1, 2]
-        })).rejects.toThrowError("Quiz does not exists")
+            answers: [0, 1, 2],
+        }
+
+        expect(async () => await sut.execute(dataObj)).not.toBeInstanceOf(Submission)
+        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(AppError)
+        expect(async () => await sut.execute(dataObj)).rejects.toThrow(
+            expect.objectContaining({
+                title: "ERR_QUIZ_NOT_FOUND"
+            })
+        );
     })
 
     it('should throw an error (user does not exists)', async () => {
         const { sut } = makeSut()
 
-        expect(async () => sut.execute({
+        const dataObj = {
             userId: "fake_user_id",
             quizId: quiz1.id,
-            answers: [0, 1, 2]
-        })).rejects.toThrowError("User does not exists")
+            answers: [0, 1, 2],
+        }
+
+        expect(async () => await sut.execute(dataObj)).not.toBeInstanceOf(Submission)
+        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(AppError)
+        expect(async () => await sut.execute(dataObj)).rejects.toThrow(
+            expect.objectContaining({
+                title: "ERR_USER_NOT_FOUND"
+            })
+        );
     })
 
     it('should throw an error (owner cannot answer his own survey)', async () => {
         const { sut } = makeSut()
 
-        expect(async () => sut.execute({
+        const dataObj = {
             userId: user1.id,
             quizId: quiz1.id,
-            answers: [0, 1, 2]
-        })).rejects.toThrowError("Owner cannot answer his own survey")
+            answers: [0, 1, 2],
+        }
+
+        expect(async () => await sut.execute(dataObj)).not.toBeInstanceOf(Submission)
+        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(AppError)
+        expect(async () => await sut.execute(dataObj)).rejects.toThrow(
+            expect.objectContaining({
+                title: "ERR_OWNER_CANNOT_ANSWER"
+            })
+        );
     })
 
     it('should throw an error if it has a blank answer', async () => {
         const { sut } = makeSut()
 
-        expect(async () => sut.execute({
+        const dataObj = {
             userId: user2.id,
             quizId: quiz1.id,
-            answers: [0, 1]
-        })).rejects.toThrowError("Cannot have blank answers")
+            answers: [0, 1],
+        }
+
+        expect(async () => await sut.execute(dataObj)).not.toBeInstanceOf(Submission)
+        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(AppError)
+        expect(async () => await sut.execute(dataObj)).rejects.toThrow(
+            expect.objectContaining({
+                title: "ERR_BLANK_ANSWER"
+            })
+        );
     })
 
     it('should throw an error if any answer is greater than question.length or less than 0', async () => {
         const { sut } = makeSut()
 
-        expect(async () => sut.execute({
+        const  dataObj = {
             userId: user2.id,
             quizId: quiz1.id,
-            answers: [0, 5, 2]
-        })).rejects.toThrowError("Answers must be between 0 and maximum length -1")
+            answers: [0, 5, 2],
+        }
+
+        expect(async () => await sut.execute(dataObj)).not.toBeInstanceOf(Submission)
+        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(AppError)
+        expect(async () => await sut.execute(dataObj)).rejects.toThrow(
+            expect.objectContaining({
+                title: "ERR_INVALID_USER_ANSWER"
+            })
+        );
     })
+
+    // it('should throw an error if')
 })

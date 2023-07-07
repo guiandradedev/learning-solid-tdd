@@ -11,6 +11,7 @@ import { CreateUserUseCase } from "../createUser/createUserUseCase";
 import { IQuizRepository } from "../../repositories/IQuizRepository";
 import { IQuestionRepository } from "../../repositories/IQuestionRepository";
 import { InMemoryUserTokenRepository } from '../../../tests/repositories/in-memory-user-token-repository';
+import { AppError } from '../../../shared/errors/AppError';
 
 /*
  * Regras de Negócio:
@@ -59,15 +60,23 @@ describe("Quiz", async () => {
         expect(quiz).toBeInstanceOf(Quiz)
     })
 
-    it('should not create if does not have any questions', async () => {
+    it('should not create if do not have any questions', async () => {
         const { sut } = makeSut()
 
-        expect(async () => await sut.execute({
+        const dataObj = {
             title: "Quiz",
             questions: [],
             ownerId: user1.id,
             createdAt: new Date()
-        })).rejects.toBeInstanceOf(Error)
+        }
+
+        expect(async () => await sut.execute(dataObj)).not.toBeInstanceOf(Quiz)
+        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(AppError)
+        expect(async () => await sut.execute(dataObj)).rejects.toThrow(
+            expect.objectContaining({
+                title: "ERR_INVALID_QUESTIONS"
+            })
+        );
     })
 
     it('should throw an error if at least one question does not have at least two answers', async () => {
@@ -91,8 +100,13 @@ describe("Quiz", async () => {
             createdAt: new Date()
         }
 
-        expect(async () => await sut.execute(dataObj)).rejects.toThrowError("Questions should have at least two answers");
         expect(async () => await sut.execute(dataObj)).not.toBeInstanceOf(Quiz)
+        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(AppError)
+        expect(async () => await sut.execute(dataObj)).rejects.toThrow(
+            expect.objectContaining({
+                title: "ERR_NUMBER_INVALID_ANSWERS"
+            })
+        );
     })
 
     it('should throw an error the correct answer > answers.length -1 or answer < 0', async () => {
@@ -112,7 +126,13 @@ describe("Quiz", async () => {
             createdAt: new Date()
         }
 
-        expect(async () => await sut.execute(dataObj)).rejects.toThrowError("Correct answer must be between 0 and maximum length -1");
+        expect(async () => await sut.execute(dataObj)).not.toBeInstanceOf(Quiz)
+        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(AppError)
+        expect(async () => await sut.execute(dataObj)).rejects.toThrow(
+            expect.objectContaining({
+                title: "ERR_INVALID_ANSWERS"
+            })
+        );
     })
 
     it('should throw an error if ownerId does not exists', async () => {
@@ -132,7 +152,13 @@ describe("Quiz", async () => {
             createdAt: new Date()
         }
 
-        expect(async () => await sut.execute(dataObj)).rejects.toThrowError("User does not exists");
+        expect(async () => await sut.execute(dataObj)).not.toBeInstanceOf(Quiz)
+        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(AppError)
+        expect(async () => await sut.execute(dataObj)).rejects.toThrow(
+            expect.objectContaining({
+                title: "ERR_USER_NOT_FOUND"
+            })
+        );
 
     })
 

@@ -1,20 +1,14 @@
-import { Router} from 'express'
-import { CreateUserController } from '../../../application/useCases/createUser/CreateUserController'
-import { CreateQuizController } from '../../../application/useCases/createQuiz/createQuizController'
-import { AuthenticateUserController } from '../../../application/useCases/authenticateUser/authenticateUserController'
+import { Router } from 'express'
+import auth from './auth'
+import quiz from './quiz'
 
 const routes = Router()
 
-routes.get("/", (req, res)=>{
+routes.get("/", (req, res) => {
     res.send("Hello API")
 })
 
-const createUserController = new CreateUserController()
-const createQuizController = new CreateQuizController()
-const authenticateUserController = new AuthenticateUserController()
-
-routes.post('/user', createUserController.handle)
-routes.post('/auth', authenticateUserController.handle)
-routes.post('/quiz', createQuizController.handle)
+routes.use('/auth', auth)
+routes.use('/quiz', quiz)
 
 export default routes;

@@ -10,6 +10,7 @@ import { CreateUserUseCase } from "../createUser/createUserUseCase";
 import { UserToken } from '../../../domain/entities/user-token';
 import jwt from "jsonwebtoken";
 import { TokensReturnsTest } from '../../services/sessionService.spec';
+import { AppError } from '../../../shared/errors/AppError';
 
 describe('Authentication', async () => {
     const makeSup = () => {
@@ -17,11 +18,11 @@ describe('Authentication', async () => {
         const userTokenRepository = new InMemoryUserTokenRepository()
         const sutUser = new CreateUserUseCase(usersRepository, userTokenRepository)
         const sut = new AuthenticateUserUseCase(usersRepository, userTokenRepository)
-        
-        return {sut, sutUser, usersRepository, userTokenRepository}
+
+        return { sut, sutUser, usersRepository, userTokenRepository }
     }
     it('Authenticate User', async () => {
-        const {sutUser, sut} = makeSup();
+        const { sutUser, sut } = makeSup();
 
         await sutUser.execute({
             email: "flaamer@gmail.com",
@@ -38,16 +39,24 @@ describe('Authentication', async () => {
     })
 
     it('Should throw an error if user does not exists', async () => {
-        const {sut} = makeSup()
+        const { sut } = makeSup()
 
-        expect(async () => await sut.execute({
+        const dataObj = {
             email: "fake_email@email.com",
             password: "fake_password"
-        })).rejects.toThrowError("User or password incorrect")
+        }
+
+        expect(async () => await sut.execute(dataObj)).not.toBeInstanceOf(User)
+        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(AppError)
+        expect(async () => await sut.execute(dataObj)).rejects.toThrow(
+            expect.objectContaining({
+                title: "ERR_USER_INVALID"
+            })
+        );
     })
 
     it('Should throw an error if password != user.password', async () => {
-        const {sut, sutUser} = makeSup()
+        const { sut, sutUser } = makeSup()
 
         await sutUser.execute({
             email: "flaamer@gmail.com",
@@ -55,14 +64,22 @@ describe('Authentication', async () => {
             password: "teste123"
         })
 
-        expect(async () => await sut.execute({
+        const dataObj = {
             email: "fake_email@email.com",
             password: "fake_password"
-        })).rejects.toThrowError("User or password incorrect")
+        }
+
+        expect(async () => await sut.execute(dataObj)).not.toBeInstanceOf(User)
+        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(AppError)
+        expect(async () => await sut.execute(dataObj)).rejects.toThrow(
+            expect.objectContaining({
+                title: "ERR_USER_INVALID"
+            })
+        );
     })
 
     it('should return an access and refresh token', async () => {
-        const {sutUser, sut} = makeSup();
+        const { sutUser, sut } = makeSup();
 
         await sutUser.execute({
             email: "flaamer@gmail.com",
@@ -79,7 +96,7 @@ describe('Authentication', async () => {
     })
 
     it('should return an access and refresh token VALIDS', async () => {
-        const {sutUser, sut} = makeSup();
+        const { sutUser, sut } = makeSup();
 
         await sutUser.execute({
             email: "flaamer@gmail.com",
@@ -107,6 +124,7 @@ describe('Authentication', async () => {
             sub: expect.any(String)
         })
         expect(verifyRefresh.sub).toEqual(user.id)
-
     })
+
+    // it('should throw an error if ')
 })
