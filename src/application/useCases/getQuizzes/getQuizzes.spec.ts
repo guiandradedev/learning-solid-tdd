@@ -2,18 +2,16 @@ import 'reflect-metadata'
 import 'dotenv/config'
 
 import { describe, expect, it } from "vitest";
-import { InMemoryQuizRepository } from "../../../tests/repositories/in-memory-quiz-repository";
-import { InMemoryQuestionsRepository } from "../../../tests/repositories/in-memory-question-repository";
+import { InMemoryQuizRepository, InMemoryQuestionsRepository,    InMemoryUsersRepository,    InMemorySubmissionsRepository,    InMemoryUserTokenRepository } from "../../../tests/repositories";
 import { CreateQuizUseCase } from "../createQuiz/createQuizUseCase";
-import { InMemoryUsersRepository } from "../../../tests/repositories/in-memory-user-repository";
-import { InMemorySubmissionsRepository } from "../../../tests/repositories/in-memory-submission-repository";
-import { User } from "../../../domain/entities/user";
+import { User, Quiz } from "../../../domain/entities";
 import { CreateUserUseCase } from "../createUser/createUserUseCase";
-import { Quiz } from "../../../domain/entities/quiz";
 import { GetQuizzesUseCase } from "./getQuizzesUseCase";
-import { InMemoryUserTokenRepository } from '../../../tests/repositories/in-memory-user-token-repository';
+import { InMemoryHashAdapter, InMemorySecurityAdapter } from '../../../tests/adapters';
 
 describe("Get Quizzes", async () => {
+    it('', ()=>{})
+
     /*
      * Regras de Negócios
      * - Deve retornar todos os quizzes armazenados
@@ -27,9 +25,11 @@ describe("Get Quizzes", async () => {
     }
 
     const makeSut = async (): Promise<returnSut> => {
-        const usersRepository = new InMemoryUsersRepository();
+        const usersRepository = new InMemoryUsersRepository()
         const userTokenRepository = new InMemoryUserTokenRepository()
-        const sutUser = new CreateUserUseCase(usersRepository, userTokenRepository)
+        const hashAdapter = new InMemoryHashAdapter(12);
+        const securityAdapter = new InMemorySecurityAdapter()
+        const sutUser = new CreateUserUseCase(usersRepository, userTokenRepository, hashAdapter, securityAdapter)
 
         const user1 = await sutUser.execute({
             email: "flaamer@gmail.com",

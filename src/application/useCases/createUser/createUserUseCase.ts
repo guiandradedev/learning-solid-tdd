@@ -1,13 +1,10 @@
-import { User } from "../../../domain/entities/user";
-import { IUsersRepository } from "../../repositories/IUsersRepository";
 import { inject, injectable } from "tsyringe";
-import bcrypt from "bcrypt";
-import { IUserTokenRepository } from "../../repositories/IUserTokenRepository";
+import { User, UserToken } from "../../../domain/entities";
+import { IUsersRepository, IUserTokenRepository } from "../../repositories";
 import { CreateSession } from "../../services/SessionService";
-import { UserToken } from "../../../domain/entities/user-token";
 import { UserAuthenticatetedResponse } from "../authenticateUser/authenticateUserUseCase";
-import { AppError } from "../../../shared/errors/AppError";
-export const saltValue = 12
+import { AppError } from "../../../shared/errors";
+import { HashAdapter, SecurityAdapter } from "shared/adapters";
 
 type CreateUserRequest = {
     name: string,
@@ -21,21 +18,26 @@ export class CreateUserUseCase {
         @inject('UsersRepository')
         private usersRepository: IUsersRepository,
         @inject('UserTokenRepository')
-        private userTokenRepository: IUserTokenRepository
+        private userTokenRepository: IUserTokenRepository,
+
+        @inject('HashAdapter')
+        private hashAdapter: HashAdapter,
+
+        @inject('SecurityAdapter')
+        private securityAdapter: SecurityAdapter
     ) { }
 
     async execute({ name, email, password }: CreateUserRequest): Promise<UserAuthenticatetedResponse> {
         const userAlreadyExists = await this.usersRepository.findByEmail(email)
-        if (userAlreadyExists) throw new AppError({title: "ERR_USER_ALREADY_EXISTS", message: "User already exists", status: 500})
+        if (userAlreadyExists) throw new AppError({ title: "ERR_USER_ALREADY_EXISTS", message: "User already exists", status: 500 })
 
-        const salt = await bcrypt.genSalt(saltValue);
-        const passwordHash = await bcrypt.hash(password, salt);
+        const passwordHash = await this.hashAdapter.hash(password)
         password = passwordHash;
 
         const user = User.create({ name, email, password })
         await this.usersRepository.create(user)
 
-        const sessionService = new CreateSession()
+        const sessionService = new CreateSession(this.securityAdapter)
         const { accessToken, refreshToken, refreshTokenExpiresDate, accessTokenExpiresDate } = await sessionService.execute(email, user.id)
 
         const userToken = UserToken.create({

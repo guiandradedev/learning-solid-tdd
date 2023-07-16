@@ -1,6 +1,6 @@
 import { Entity } from "../../core/domain/Entity";
 
-type SubmissionProps = {
+export type SubmissionProps = {
     userId: string,
     quizId: string,
     answers: number[],

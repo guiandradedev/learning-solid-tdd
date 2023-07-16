@@ -4,33 +4,34 @@ import dayjs from "dayjs";
 import jwt from "jsonwebtoken";
 import { ITokens } from "../../@types/token.types";
 import { AppError } from '../../shared/errors/AppError';
+import { SecurityAdapter } from '../../shared/adapters';
 
 class CreateSession {
+    constructor(
+        public securityAdapter: SecurityAdapter
+    ) { }
     async execute(email: string, _id: string): Promise<ITokens> {
         try {
             _id = _id.toString();
 
-            const accessToken = jwt.sign({}, process.env.JWT_ACCESS_TOKEN, {
+            const accessToken = this.securityAdapter.encrypt({}, process.env.ACCESS_TOKEN, {
                 subject: _id,
-                expiresIn: process.env.JWT_EXPIRES_IN_TOKEN,
+                expiresIn: process.env.EXPIRES_IN_TOKEN,
+            })
+
+            const refreshToken = this.securityAdapter.encrypt({ email }, process.env.REFRESH_TOKEN, {
+                subject: _id,
+                expiresIn: process.env.EXPIRES_IN_REFRESH_TOKEN,
             });
 
-            const refreshToken = jwt.sign({ email }, process.env.JWT_REFRESH_TOKEN, {
-                subject: _id,
-                expiresIn: process.env.JWT_EXPIRES_IN_REFRESH_TOKEN,
-            });
-
-            const refreshTokenExpiresDate = dayjs()
-                .add(process.env.JWT_EXPIRES_REFRESH_TOKEN_DAYS, "days")
-                .toDate();
-
-            const accessTokenExpiresDate = dayjs().add(parseInt(process.env.JWT_EXPIRES_IN_TOKEN), 'day').toDate();
+            const refreshTokenExpiresDate = new Date().getTime() + Number(process.env.EXPIRES_IN_TOKEN)
+            const accessTokenExpiresDate = new Date().getTime() + Number(process.env.EXPIRES_IN_REFRESH_TOKEN)
 
             return { accessToken, refreshToken, refreshTokenExpiresDate, accessTokenExpiresDate };
 
         } catch (error) {
             console.log(error)
-            throw new AppError({title: "ERR_CREATE_TOKEN", message: "Error while creating user token", status: 500})
+            throw new AppError({ title: "ERR_CREATE_TOKEN", message: "Error while creating user token", status: 500 })
         }
     }
 }

@@ -1,19 +1,18 @@
 import 'reflect-metadata'
 import 'dotenv/config'
-
 import { describe, expect, it } from "vitest";
-import { InMemoryUsersRepository } from "../../../tests/repositories/in-memory-user-repository";
+
 import { CreateUserUseCase } from "../createUser/createUserUseCase";
-import { InMemoryQuizRepository } from "../../../tests/repositories/in-memory-quiz-repository";
 import { CreateQuizUseCase } from "../createQuiz/createQuizUseCase";
-import { InMemoryQuestionsRepository } from "../../../tests/repositories/in-memory-question-repository";
-import { Submission } from "../../../domain/entities/submission";
-import { InMemorySubmissionsRepository } from "../../../tests/repositories/in-memory-submission-repository";
 import { CreateSubmissionUseCase } from "./createSubmissionUseCase";
-import { InMemoryUserTokenRepository } from '../../../tests/repositories/in-memory-user-token-repository';
-import { AppError } from '../../../shared/errors/AppError';
+import { Submission } from "../../../domain/entities";
+import { AppError } from '../../../shared/errors';
+import { InMemoryUsersRepository, InMemoryQuizRepository, InMemoryQuestionsRepository, InMemorySubmissionsRepository, InMemoryUserTokenRepository } from "../../../tests/repositories/";
+import { InMemoryHashAdapter, InMemorySecurityAdapter } from '../../../tests/adapters';
 
 describe("Create Submission", async () => {
+    it('', () => { })
+
     /*
      * Regras de Negócio:
      * - O quiz deve existir ✓
@@ -24,17 +23,19 @@ describe("Create Submission", async () => {
      * - Deve retornar um array binario correctAnswers com respostas corretas ✓
      */
 
-    const usersRepository = new InMemoryUsersRepository();
+    const usersRepository = new InMemoryUsersRepository()
     const userTokenRepository = new InMemoryUserTokenRepository()
-    const sutUser = new CreateUserUseCase(usersRepository, userTokenRepository)
+    const hashAdapter = new InMemoryHashAdapter(12)
+    const securityAdapter = new InMemorySecurityAdapter()
+    const userAdapter = new CreateUserUseCase(usersRepository, userTokenRepository, hashAdapter, securityAdapter)
 
-    const user1 = await sutUser.execute({
+    const user1 = await userAdapter.execute({
         email: "flaamer@gmail.com",
         name: "flaamer",
         password: "teste123"
     })
 
-    const user2 = await sutUser.execute({
+    const user2 = await userAdapter.execute({
         email: "flaamer1@gmail.com",
         name: "flaamer",
         password: "teste123"
@@ -161,7 +162,7 @@ describe("Create Submission", async () => {
     it('should throw an error if any answer is greater than question.length or less than 0', async () => {
         const { sut } = makeSut()
 
-        const  dataObj = {
+        const dataObj = {
             userId: user2.id,
             quizId: quiz1.id,
             answers: [0, 5, 2],

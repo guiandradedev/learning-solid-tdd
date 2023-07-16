@@ -1,4 +1,4 @@
-import { Quiz } from "../../domain/entities/quiz";
+import { Quiz } from "../../domain/entities";
 
 export type QuizRequestRepository = {
     include: {

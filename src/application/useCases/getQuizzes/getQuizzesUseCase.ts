@@ -1,7 +1,6 @@
-import { Quiz } from "../../../domain/entities/quiz";
-import { AppError } from "../../../shared/errors/AppError";
-import { IQuestionRepository } from "../../repositories/IQuestionRepository";
-import { IQuizRepository } from "../../repositories/IQuizRepository";
+import { Quiz } from "../../../domain/entities";
+import { AppError } from "../../../shared/errors";
+import { IQuizRepository, IQuestionRepository } from "../../repositories/";
 
 export class GetQuizzesUseCase {
     constructor(

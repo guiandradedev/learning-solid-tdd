@@ -1,12 +1,12 @@
 import 'dotenv/config'
 import 'reflect-metadata'
 import { describe, it, expect } from "vitest";
-import { InMemoryUsersRepository } from "../../../tests/repositories/in-memory-user-repository";
 import { CreateUserUseCase } from "./createUserUseCase";
 import { User } from "../../../domain/entities/user";
-import { IUsersRepository } from "../../repositories/IUsersRepository";
-import { InMemoryUserTokenRepository } from '../../../tests/repositories/in-memory-user-token-repository';
-import { AppError } from '../../../shared/errors/AppError';
+import { AppError } from '../../../shared/errors';
+import { InMemoryHashAdapter, InMemorySecurityAdapter } from '../../../tests/adapters';
+import { InMemoryUserTokenRepository, InMemoryUsersRepository } from '../../../tests/repositories';
+import { IUsersRepository } from '../../repositories';
 
 
 describe('create an user', () => {
@@ -14,7 +14,9 @@ describe('create an user', () => {
     const makeSut = (): { sut: CreateUserUseCase, usersRepository: IUsersRepository } => {
         const usersRepository = new InMemoryUsersRepository()
         const userTokenRepository = new InMemoryUserTokenRepository()
-        const sut = new CreateUserUseCase(usersRepository, userTokenRepository)
+        const hashAdapter = new InMemoryHashAdapter(12);
+        const securityAdapter = new InMemorySecurityAdapter()
+        const sut = new CreateUserUseCase(usersRepository, userTokenRepository, hashAdapter, securityAdapter)
 
         return { sut, usersRepository }
     }
@@ -52,6 +54,5 @@ describe('create an user', () => {
                 title: "ERR_USER_ALREADY_EXISTS"
             })
         );
-
     })
 })

@@ -1,4 +1,4 @@
-import { Submission } from "../../domain/entities/submission";
+import { Submission } from "../../domain/entities";
 
 export interface ISubmissionRepository {
     findById(id: string): Promise<Submission | null>

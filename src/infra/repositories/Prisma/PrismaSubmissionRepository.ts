@@ -1,7 +1,7 @@
 import { ISubmissionRepository } from "../../../application/repositories/ISubmissionRepository";
 import { Submission } from "../../../domain/entities/submission";
 import { prismaSubmissionToEntity } from "../../../shared/mappers/Prisma/submission-map";
-import { prismaClient } from "../../../shared/providers/prisma";
+import { prismaClient } from "../../../shared/providers/database/prisma";
 
 
 export class PrismaSubmissionRepository implements ISubmissionRepository {

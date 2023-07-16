@@ -2,16 +2,14 @@ import 'reflect-metadata'
 import 'dotenv/config'
 
 import { it, expect, describe } from "vitest";
-import { CreateQuizUseCase } from "./createQuizUseCase";
-import { Quiz } from "../../../domain/entities/quiz";
-import { InMemoryQuizRepository } from "../../../tests/repositories/in-memory-quiz-repository";
-import { InMemoryQuestionsRepository } from "../../../tests/repositories/in-memory-question-repository";
-import { InMemoryUsersRepository } from "../../../tests/repositories/in-memory-user-repository";
+import { CreateQuizProps, CreateQuizUseCase } from "./createQuizUseCase";
+import { Quiz } from "../../../domain/entities";
 import { CreateUserUseCase } from "../createUser/createUserUseCase";
-import { IQuizRepository } from "../../repositories/IQuizRepository";
-import { IQuestionRepository } from "../../repositories/IQuestionRepository";
-import { InMemoryUserTokenRepository } from '../../../tests/repositories/in-memory-user-token-repository';
-import { AppError } from '../../../shared/errors/AppError';
+import { IQuizRepository, IQuestionRepository } from "../../repositories";
+import { AppError } from '../../../shared/errors';
+import { InMemoryHashAdapter, InMemorySecurityAdapter } from '../../../tests/adapters';
+import { InMemoryQuestionsRepository, InMemoryQuizRepository, InMemoryUsersRepository, InMemoryUserTokenRepository } from '../../../tests/repositories';
+
 
 /*
  * Regras de Negócio:
@@ -23,11 +21,15 @@ import { AppError } from '../../../shared/errors/AppError';
  */
 
 describe("Quiz", async () => {
+    it('', ()=>{})
+
     const usersRepository = new InMemoryUsersRepository()
     const userTokenRepository = new InMemoryUserTokenRepository()
-    const sut = new CreateUserUseCase(usersRepository, userTokenRepository)
+    const hashAdapter = new InMemoryHashAdapter(12)
+    const securityAdapter = new InMemorySecurityAdapter()
+    const userAdapter = new CreateUserUseCase(usersRepository, userTokenRepository, hashAdapter, securityAdapter)
 
-    const user1 = await sut.execute({
+    const user1 = await userAdapter.execute({
         email: "flaamer@gmail.com",
         name: "Guilherme",
         password: "teste123"
@@ -63,7 +65,7 @@ describe("Quiz", async () => {
     it('should not create if do not have any questions', async () => {
         const { sut } = makeSut()
 
-        const dataObj = {
+        const dataObj: CreateQuizProps = {
             title: "Quiz",
             questions: [],
             ownerId: user1.id,

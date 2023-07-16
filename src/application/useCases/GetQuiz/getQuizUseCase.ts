@@ -1,8 +1,7 @@
 import { inject, injectable } from "tsyringe";
-import { IQuestionRepository } from "../../repositories/IQuestionRepository";
-import { IQuizRepository } from "../../repositories/IQuizRepository";
-import { Quiz } from "../../../domain/entities/quiz";
-import { AppError } from "../../../shared/errors/AppError";
+import { IQuestionRepository, IQuizRepository } from "../../repositories";
+import { Quiz } from "../../../domain/entities";
+import { AppError } from "../../../shared/errors";
 
 type GetQuizRequest = {
     quizId: string

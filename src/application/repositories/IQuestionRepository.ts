@@ -1,4 +1,4 @@
-import { Question } from "../../domain/entities/question";
+import { Question } from "../../domain/entities";
 
 export interface IQuestionRepository {
     create(question: Question): Promise<void>

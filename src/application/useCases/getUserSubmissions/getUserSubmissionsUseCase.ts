@@ -1,6 +1,5 @@
-import { AppError } from "../../../shared/errors/AppError";
-import { ISubmissionRepository } from "../../repositories/ISubmissionRepository";
-import { IUsersRepository } from "../../repositories/IUsersRepository";
+import { AppError } from "../../../shared/errors";
+import { ISubmissionRepository, IUsersRepository } from "../../repositories";
 
 type GetUserRequest = {
     userId: string

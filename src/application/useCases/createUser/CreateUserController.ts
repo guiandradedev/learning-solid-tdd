@@ -1,15 +1,15 @@
 import { Request, Response } from "express";
-import { User } from "../../../domain/entities/user";
 import { container } from "tsyringe";
+
 import { CreateUserUseCase } from "./createUserUseCase";
-import { AppError } from "../../../shared/errors/AppError";
+import { AppError, ErrInternalServerError, ErrInvalidData } from "shared/errors";
 
 export class CreateUserController {
 
     async handle(request: Request, response: Response): Promise<Response> {
         const { name, email, password } = request.body
 
-        if (!name || !email || !password) return response.status(422).json({ errors: "Invalid Data" })
+        if (!name || !email || !password) return response.status(422).json({erros: [ErrInvalidData]})
 
         try {
             const createUserUseCase = container.resolve(CreateUserUseCase)
@@ -20,12 +20,12 @@ export class CreateUserController {
                 password
             })
 
-            return response.status(201).json(user);
+            return response.status(201).json({data: user});
         } catch (error) {
             if(error instanceof AppError) {
                 return response.status(500).json({ errors: [error] })
             }
-            return response.status(500).json({ errors: "Unknow Error" })
+            return response.status(500).json({erros: [ErrInternalServerError]})
         }
     }
 };

@@ -2,24 +2,26 @@ import 'reflect-metadata'
 import 'dotenv/config'
 
 import { describe, expect, it } from "vitest";
-import { InMemoryUserTokenRepository } from "../../../tests/repositories/in-memory-user-token-repository";
-import { InMemoryUsersRepository } from "../../../tests/repositories/in-memory-user-repository";
-import { User } from "../../../domain/entities/user";
+import { AppError } from '../../../shared/errors';
+import { InMemoryUserTokenRepository, InMemoryUsersRepository } from "../../../tests/repositories";
 import { AuthenticateUserUseCase } from "./authenticateUserUseCase";
 import { CreateUserUseCase } from "../createUser/createUserUseCase";
-import { UserToken } from '../../../domain/entities/user-token';
-import jwt from "jsonwebtoken";
-import { TokensReturnsTest } from '../../services/sessionService.spec';
-import { AppError } from '../../../shared/errors/AppError';
+import { User, UserToken } from '../../../domain/entities';
+import { InMemoryHashAdapter, InMemorySecurityAdapter } from '../../../tests/adapters';
+import { SecurityDecryptResponse } from 'shared/adapters';
 
 describe('Authentication', async () => {
-    const makeSup = () => {
-        const usersRepository = new InMemoryUsersRepository();
-        const userTokenRepository = new InMemoryUserTokenRepository()
-        const sutUser = new CreateUserUseCase(usersRepository, userTokenRepository)
-        const sut = new AuthenticateUserUseCase(usersRepository, userTokenRepository)
+    it('', () => { })
 
-        return { sut, sutUser, usersRepository, userTokenRepository }
+    const makeSup = () => {
+        const usersRepository = new InMemoryUsersRepository()
+        const userTokenRepository = new InMemoryUserTokenRepository()
+        const hashAdapter = new InMemoryHashAdapter(12);
+        const securityAdapter = new InMemorySecurityAdapter()
+        const sutUser = new CreateUserUseCase(usersRepository, userTokenRepository, hashAdapter, securityAdapter)
+        const sut = new AuthenticateUserUseCase(usersRepository, userTokenRepository, hashAdapter, securityAdapter)
+
+        return { sut, sutUser, usersRepository, userTokenRepository, securityAdapter, hashAdapter }
     }
     it('Authenticate User', async () => {
         const { sutUser, sut } = makeSup();
@@ -96,7 +98,7 @@ describe('Authentication', async () => {
     })
 
     it('should return an access and refresh token VALIDS', async () => {
-        const { sutUser, sut } = makeSup();
+        const { sutUser, sut, securityAdapter } = makeSup();
 
         await sutUser.execute({
             email: "flaamer@gmail.com",
@@ -109,21 +111,24 @@ describe('Authentication', async () => {
             password: "teste123"
         })
 
-        const verifyAccess = jwt.verify(user.token.props.accessToken, process.env.JWT_ACCESS_TOKEN)
-        expect(verifyAccess).toMatchObject<TokensReturnsTest>({
-            exp: expect.any(Number),
-            iat: expect.any(Number),
-            sub: expect.any(String)
-        })
-        expect(verifyAccess.sub).toEqual(user.id)
+        const verifyAccess = securityAdapter.decrypt(user.token.props.accessToken, process.env.ACCESS_TOKEN)
 
-        const verifyRefresh = jwt.verify(user.token.props.refreshToken, process.env.JWT_REFRESH_TOKEN)
-        expect(verifyRefresh).toMatchObject<TokensReturnsTest>({
-            exp: expect.any(Number),
-            iat: expect.any(Number),
-            sub: expect.any(String)
+        expect(verifyAccess).toMatchObject<SecurityDecryptResponse>({
+            expiresIn: expect.any(Number),
+            issuedAt: expect.any(Number),
+            subject: user.id
         })
-        expect(verifyRefresh.sub).toEqual(user.id)
+        expect(verifyAccess.issuedAt).toBeGreaterThanOrEqual(Date.now() - 100);
+        expect(verifyAccess.expiresIn).toBeLessThanOrEqual(Date.now() + Number(process.env.EXPIRES_IN_TOKEN));
+
+        const verifyRefresh = securityAdapter.decrypt(user.token.props.refreshToken, process.env.REFRESH_TOKEN)
+        expect(verifyRefresh).toMatchObject<SecurityDecryptResponse>({
+            expiresIn: expect.any(Number),
+            issuedAt: expect.any(Number),
+            subject: user.id
+        })
+        expect(verifyAccess.issuedAt).toBeGreaterThanOrEqual(Date.now() - 100);
+        expect(verifyAccess.expiresIn).toBeLessThanOrEqual(Date.now() + Number(process.env.EXPIRES_IN_TOKEN));
     })
 
     // it('should throw an error if ')

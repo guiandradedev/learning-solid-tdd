@@ -8,11 +8,11 @@ declare global {
       SECURITY: string;
       ENV: "test" | "dev" | "prod";
       DATABASE_URL: string;
-      JWT_ACCESS_TOKEN: string;
-      JWT_REFRESH_TOKEN: string;
-      JWT_EXPIRES_IN_TOKEN: string;
-      JWT_EXPIRES_IN_REFRESH_TOKEN: string;
-      JWT_EXPIRES_REFRESH_TOKEN_DAYS: number;
+      ACCESS_TOKEN: string;
+      REFRESH_TOKEN: string;
+      EXPIRES_IN_TOKEN: number;
+      EXPIRES_IN_REFRESH_TOKEN: number;
+      EXPIRES_REFRESH_TOKEN_DAYS: number;
 
     }
   }

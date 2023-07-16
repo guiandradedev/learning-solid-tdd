@@ -1,19 +1,15 @@
 import 'dotenv/config'
 import 'reflect-metadata'
 
-import { describe, expect, it } from "vitest";
-import { InMemorySubmissionsRepository } from "../../../tests/repositories/in-memory-submission-repository";
+import { describe, expect, expectTypeOf, it } from "vitest";
+import { InMemorySubmissionsRepository, InMemoryUsersRepository,    InMemoryQuizRepository,    InMemoryQuestionsRepository,    InMemoryUserTokenRepository } from "../../../tests/repositories";
 import { CreateSubmissionUseCase } from "../createSubmission/createSubmissionUseCase";
-import { InMemoryUsersRepository } from "../../../tests/repositories/in-memory-user-repository";
 import { CreateUserUseCase } from "../createUser/createUserUseCase";
-import { InMemoryQuizRepository } from "../../../tests/repositories/in-memory-quiz-repository";
-import { InMemoryQuestionsRepository } from "../../../tests/repositories/in-memory-question-repository";
 import { CreateQuizUseCase } from "../createQuiz/createQuizUseCase";
-import { Submission } from "../../../domain/entities/submission";
 import { GetUserSubmissionsUseCase } from "./getUserSubmissionsUseCase";
-import { User } from "../../../domain/entities/user";
-import { InMemoryUserTokenRepository } from '../../../tests/repositories/in-memory-user-token-repository';
-import { AppError } from '../../../shared/errors/AppError';
+import { User, Submission, SubmissionProps } from "../../../domain/entities";
+import { AppError } from '../../../shared/errors';
+import { InMemoryHashAdapter, InMemorySecurityAdapter } from '../../../tests/adapters';
 
 /*
  * Regras de Négocios
@@ -25,6 +21,8 @@ import { AppError } from '../../../shared/errors/AppError';
 
 describe("Get user submissions", () => {
 
+    it('', ()=>{})
+
     type returnSut = {
         sut: GetUserSubmissionsUseCase,
         SubmissionsInMemoryRepository: InMemorySubmissionsRepository,
@@ -32,9 +30,11 @@ describe("Get user submissions", () => {
     }
 
     const makeSut = async (): Promise<returnSut> => {
-        const usersRepository = new InMemoryUsersRepository();
+        const usersRepository = new InMemoryUsersRepository()
         const userTokenRepository = new InMemoryUserTokenRepository()
-        const sutUser = new CreateUserUseCase(usersRepository, userTokenRepository)
+        const hashAdapter = new InMemoryHashAdapter(12);
+        const securityAdapter = new InMemorySecurityAdapter()
+        const sutUser = new CreateUserUseCase(usersRepository, userTokenRepository, hashAdapter, securityAdapter)
 
         const user1 = await sutUser.execute({
             email: "flaamer@gmail.com",

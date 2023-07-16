@@ -1,34 +1,51 @@
 import 'dotenv/config'
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vitest } from "vitest";
 import { CreateSession } from "./SessionService";
-import jwt from "jsonwebtoken";
-
-export type TokensReturnsTest = {
-    exp: number;
-    iat: number;
-    sub: string
-};
+import { SecurityAdapter, SecurityDecryptResponse } from '../../shared/adapters';
+import { InMemorySecurityAdapter } from '../../tests/adapters/InMemorySecurityAdapter';
 
 describe("Session Service", async () => {
+    type TypeSut = {
+        securityAdapter: SecurityAdapter
+        createSession: CreateSession
+    }
+    const makeSut = (securityAdapter: SecurityAdapter = new InMemorySecurityAdapter()): TypeSut => {
+        const createSession = new CreateSession(securityAdapter)
+        return { securityAdapter, createSession }
+    }
     it('should create a valid token and refresh_token', async () => {
-        const createSession = new CreateSession()
+        const { createSession, securityAdapter } = makeSut()
         const userId = 'fake_user_id'
         const { accessToken, refreshToken } = await createSession.execute('fake_email@email.com', userId)
 
-        const verifyAccess = jwt.verify(accessToken, process.env.JWT_ACCESS_TOKEN)
-        expect(verifyAccess).toMatchObject<TokensReturnsTest>({
-            exp: expect.any(Number),
-            iat: expect.any(Number),
-            sub: expect.any(String)
-        })
-        expect(verifyAccess.sub).toEqual(userId)
+        const verifyAccess = securityAdapter.decrypt(accessToken, process.env.ACCESS_TOKEN)
 
-        const verifyRefresh = jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN)
-        expect(verifyRefresh).toMatchObject<TokensReturnsTest>({
-            exp: expect.any(Number),
-            iat: expect.any(Number),
-            sub: expect.any(String)
+        expect(verifyAccess).toMatchObject<SecurityDecryptResponse>({
+            expiresIn: expect.any(Number),
+            issuedAt: expect.any(Number),
+            subject: userId
         })
-        expect(verifyRefresh.sub).toEqual(userId)
+        expect(verifyAccess.issuedAt).toBeGreaterThanOrEqual(Date.now() - 100);
+        expect(verifyAccess.expiresIn).toBeLessThanOrEqual(Date.now() + Number(process.env.EXPIRES_IN_TOKEN));
+
+        const verifyRefresh = securityAdapter.decrypt(refreshToken, process.env.REFRESH_TOKEN)
+        expect(verifyRefresh).toMatchObject<SecurityDecryptResponse>({
+            expiresIn: expect.any(Number),
+            issuedAt: expect.any(Number),
+            subject: userId
+        })
+        expect(verifyAccess.issuedAt).toBeGreaterThanOrEqual(Date.now() - 100);
+        expect(verifyAccess.expiresIn).toBeLessThanOrEqual(Date.now() + Number(process.env.EXPIRES_IN_TOKEN));
     })
+
+    // it('should throw an error if an adapter error occurs', async () => {
+    //     const { createSession, securityAdapter } = makeSut()
+    //     const userId = 'fake_user_id'
+
+    //     vitest.spyOn(createSession.securityAdapter, 'encrypt').mockReturnValueOnce(new Error())
+
+    //     const { accessToken, refreshToken } = await createSession.execute('fake_email@email.com', userId)
+
+        
+    // })
 })

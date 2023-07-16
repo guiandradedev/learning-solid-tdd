@@ -1,11 +1,9 @@
 import { inject, injectable } from "tsyringe";
-import { User } from "../../../domain/entities/user";
-import { IUserTokenRepository } from "../../repositories/IUserTokenRepository";
-import { IUsersRepository } from "../../repositories/IUsersRepository";
-import bcrypt from 'bcrypt'
+import { IUserTokenRepository, IUsersRepository } from "../../repositories";
 import { CreateSession } from "../../services/SessionService";
-import { UserToken } from "../../../domain/entities/user-token";
-import { AppError } from "../../../shared/errors/AppError";
+import { User, UserToken } from "../../../domain/entities";
+import { AppError } from "../../../shared/errors";
+import { HashAdapter, SecurityAdapter } from "../../../shared/adapters";
 
 type AuthenticateUserRequest = {
     email: string,
@@ -22,7 +20,13 @@ export class AuthenticateUserUseCase {
         @inject('UsersRepository')
         private userRepository: IUsersRepository,
         @inject('UserTokenRepository')
-        private userTokenRepository: IUserTokenRepository
+        private userTokenRepository: IUserTokenRepository,
+        
+        @inject('HashAdapter')
+        private hashAdapter: HashAdapter,
+        
+        @inject('SecurityAdapter')
+        private securityAdapter: SecurityAdapter
     ) { }
 
     async execute({ email, password }: AuthenticateUserRequest): Promise<UserAuthenticatetedResponse> {
@@ -30,10 +34,10 @@ export class AuthenticateUserUseCase {
 
         if (!user) throw new AppError({title: "ERR_USER_INVALID", message: "User or password incorrect", status: 422})
 
-        const checkPassword = await bcrypt.compare(password, user.props.password);
+        const checkPassword = await this.hashAdapter.compare(password, user.props.password);
         if (!checkPassword) throw new AppError({title: "ERR_USER_INVALID", message: "User or password incorrect", status: 422})
 
-        const sessionService = new CreateSession()
+        const sessionService = new CreateSession(this.securityAdapter)
         const { accessToken, refreshToken, refreshTokenExpiresDate, accessTokenExpiresDate } = await sessionService.execute(email, user.id)
 
         const userToken = UserToken.create({
