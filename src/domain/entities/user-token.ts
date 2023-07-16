@@ -2,9 +2,7 @@ import { Entity } from "../../core/domain/Entity";
 
 type UserTokenProps = {
     refreshToken: string,
-    accessToken: string,
     refreshTokenExpiresDate: number,
-    accessTokenExpiresDate: number,
     createdAt: Date,
     userId: string
 }

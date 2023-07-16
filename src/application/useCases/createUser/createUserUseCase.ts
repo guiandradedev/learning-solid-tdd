@@ -43,14 +43,15 @@ export class CreateUserUseCase {
         const userToken = UserToken.create({
             createdAt: new Date(),
             refreshTokenExpiresDate,
-            accessTokenExpiresDate,
-            accessToken,
             refreshToken,
             userId: user.id
         })
         await this.userTokenRepository.create(userToken)
 
-        const userWithToken = Object.assign(user, { token: userToken })
+        const userWithToken = Object.assign(user, { token: {
+            accessToken,
+            refreshToken
+        } })
 
         return userWithToken;
     }

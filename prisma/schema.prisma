@@ -34,13 +34,16 @@ model Question {
     correctAnswer Int
     quizId        String
 
-    quiz Quiz @relation(fields: [quizId], references: [id])
+    answers QuestionAnswers[]
+    quiz    Quiz              @relation(fields: [quizId], references: [id])
 }
 
 model QuestionAnswers {
-    id       String @id
-    answer   String
-    position Int
+    id         String    @id
+    answer     String
+    position   Int
+    questionId String?
+    Question   Question? @relation(fields: [questionId], references: [id])
 }
 
 model Submission {
@@ -56,9 +59,9 @@ model Submission {
 
 model SubmissionAnswers {
     id           String  @id
+    submissionId String
     answer       Int
     correct      Boolean
-    submissionId String
 
     submission Submission @relation(fields: [submissionId], references: [id])
 }

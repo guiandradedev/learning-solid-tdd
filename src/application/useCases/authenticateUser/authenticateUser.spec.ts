@@ -4,7 +4,7 @@ import 'dotenv/config'
 import { describe, expect, it } from "vitest";
 import { AppError } from '../../../shared/errors';
 import { InMemoryUserTokenRepository, InMemoryUsersRepository } from "../../../tests/repositories";
-import { AuthenticateUserUseCase } from "./authenticateUserUseCase";
+import { AuthenticateUserUseCase, UserTokenResponse } from "./authenticateUserUseCase";
 import { CreateUserUseCase } from "../createUser/createUserUseCase";
 import { User, UserToken } from '../../../domain/entities';
 import { InMemoryHashAdapter, InMemorySecurityAdapter } from '../../../tests/adapters';
@@ -94,7 +94,10 @@ describe('Authentication', async () => {
             password: "teste123"
         })
 
-        expect(user.token).toBeInstanceOf(UserToken)
+        expect(user.token).toMatchObject<UserTokenResponse>({
+            accessToken: expect.any(String),
+            refreshToken: expect.any(String)
+        })
     })
 
     it('should return an access and refresh token VALIDS', async () => {
@@ -111,7 +114,7 @@ describe('Authentication', async () => {
             password: "teste123"
         })
 
-        const verifyAccess = securityAdapter.decrypt(user.token.props.accessToken, process.env.ACCESS_TOKEN)
+        const verifyAccess = securityAdapter.decrypt(user.token.accessToken, process.env.ACCESS_TOKEN)
 
         expect(verifyAccess).toMatchObject<SecurityDecryptResponse>({
             expiresIn: expect.any(Number),
@@ -121,7 +124,7 @@ describe('Authentication', async () => {
         expect(verifyAccess.issuedAt).toBeGreaterThanOrEqual(Date.now() - 100);
         expect(verifyAccess.expiresIn).toBeLessThanOrEqual(Date.now() + Number(process.env.EXPIRES_IN_TOKEN));
 
-        const verifyRefresh = securityAdapter.decrypt(user.token.props.refreshToken, process.env.REFRESH_TOKEN)
+        const verifyRefresh = securityAdapter.decrypt(user.token.refreshToken, process.env.REFRESH_TOKEN)
         expect(verifyRefresh).toMatchObject<SecurityDecryptResponse>({
             expiresIn: expect.any(Number),
             issuedAt: expect.any(Number),

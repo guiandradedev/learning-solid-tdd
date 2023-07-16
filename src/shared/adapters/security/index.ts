@@ -1,2 +1,2 @@
-export * from './JwtSecurityProvider'
+export * from './JwtSecurityAdapter'
 export * from './security'
