@@ -1,3 +1,4 @@
+import { ErrInternalServerError, ErrTokenInvalid, ErrTokenNotProvided } from "../../../shared/errors"
 import { SecurityDecryptResponse, SecurityAdapter } from "../../../shared/adapters"
 import jwt, { JwtPayload } from 'jsonwebtoken'
 
@@ -19,7 +20,21 @@ export class JwtSecurityAdapter implements SecurityAdapter {
         return jwt.sign(data, secret, options)
     }
     decrypt(value: string, secret: string): SecurityDecryptResponse {
-        const data = jwt.verify(value, secret) as JwtPayload
-        return this.mapper(data)
+        try {
+            const data = jwt.verify(value, secret) as JwtPayload
+            
+            return this.mapper(data)
+        } catch (error) {
+            if(error instanceof Error) {
+                if(error.message === "jwt expired" || error.message === "invalid signature") {
+                    throw ErrTokenInvalid
+                }
+                if(error.message == 'jwt must be provided') {
+                    throw ErrTokenNotProvided
+                }
+                throw ErrInternalServerError
+            }
+            throw ErrInternalServerError
+        }
     }
 }

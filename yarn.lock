@@ -191,6 +191,13 @@
   resolved "https://registry.npmjs.org/@types/node/-/node-20.3.3.tgz"
   integrity sha512-wheIYdr4NYML61AjC8MKj/2jrR/kDQri/CIpVoZwldwhnIrD/j9jIU5bJ8yBKuB2VhpFV7Ab6G2XkBjv9r9Zzw==
 
+"@types/nodemailer@^6.4.8":
+  version "6.4.8"
+  resolved "https://registry.npmjs.org/@types/nodemailer/-/nodemailer-6.4.8.tgz"
+  integrity sha512-oVsJSCkqViCn8/pEu2hfjwVO+Gb3e+eTWjg3PcjeFKRItfKpKwHphQqbYmPQrlMk+op7pNNWPbsJIEthpFN/OQ==
+  dependencies:
+    "@types/node" "*"
+
 "@types/qs@*":
   version "6.9.7"
   resolved "https://registry.npmjs.org/@types/qs/-/qs-6.9.7.tgz"
@@ -1144,6 +1151,18 @@ node-fetch@^2.6.7:
   integrity sha512-C/fGU2E8ToujUivIO0H+tpQ6HWo4eEmchoPIoXtxCrVghxdKq+QOHqEZW7tuP3KlV3bC8FRMO5nMCC7Zm1VP6g==
   dependencies:
     whatwg-url "^5.0.0"
+
+nodemailer-mock@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/nodemailer-mock/-/nodemailer-mock-2.0.1.tgz"
+  integrity sha512-2gkdW/ApexF/Y9EwJ/FXF4Df+1n/Y6Oek29QzsVJf/kMXshDW7q4CVzK/yTFFUw3Z0XnxNZNi/hG9RmMe6HHpg==
+  dependencies:
+    debug "^4.3.4"
+
+nodemailer@^6.9.3, nodemailer@^6.x:
+  version "6.9.3"
+  resolved "https://registry.npmjs.org/nodemailer/-/nodemailer-6.9.3.tgz"
+  integrity sha512-fy9v3NgTzBngrMFkDsKEj0r02U7jm6XfC3b52eoNV+GCrGj+s8pt5OqhiJdWKuw51zCTdiNR/IUD1z33LIIGpg==
 
 nopt@^5.0.0:
   version "5.0.0"

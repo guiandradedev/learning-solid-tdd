@@ -8,7 +8,7 @@ import { SecurityAdapter } from '../../shared/adapters';
 
 class CreateSession {
     constructor(
-        public securityAdapter: SecurityAdapter
+        private securityAdapter: SecurityAdapter
     ) { }
     async execute(email: string, _id: string): Promise<ITokens> {
         try {

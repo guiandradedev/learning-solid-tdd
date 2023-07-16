@@ -14,7 +14,8 @@ import { PrismaSubmissionRepository } from "../../infra/repositories/Prisma/Pris
 
 import { HashAdapter, BcryptHashAdapter } from "../adapters/hash";
 import { JwtSecurityAdapter, SecurityAdapter } from "../adapters/security";
-import { InMemoryHashAdapter } from "../../tests/adapters";
+import { MailAdapter } from "../adapters/mail";
+import { NodemailerMailAdapter } from "../adapters/mail/NodemailerMailAdapter";
 
 //Repositories
 container.registerSingleton<IUsersRepository>(
@@ -53,4 +54,10 @@ container.registerInstance<HashAdapter>(
 container.registerSingleton<SecurityAdapter>(
     "SecurityAdapter",
     JwtSecurityAdapter
+)
+
+const nodemaileradapter = new NodemailerMailAdapter()
+container.registerInstance<MailAdapter>(
+    "MailAdapter",
+    nodemaileradapter
 )

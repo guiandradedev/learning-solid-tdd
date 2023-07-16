@@ -12,6 +12,7 @@ model User {
     name       String
     email      String       @unique
     password   String
+    active     Boolean
     quizzes    Quiz[]
     Submission Submission[]
 }

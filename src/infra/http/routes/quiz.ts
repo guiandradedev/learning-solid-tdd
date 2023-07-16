@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { CreateQuizController } from '../../../application/useCases/createQuiz/createQuizController'
+import { CreateQuizController } from '../../../application/useCases/quiz/createQuiz/createQuizController'
 import { validateRules } from '../validators'
 import { quizValidationRules } from '../validators/quiz.validator'
 

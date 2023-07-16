@@ -13,7 +13,10 @@ declare global {
       EXPIRES_IN_TOKEN: number;
       EXPIRES_IN_REFRESH_TOKEN: number;
       EXPIRES_REFRESH_TOKEN_DAYS: number;
-
+      MAIL_HOST: string
+      MAIL_PORT: string,
+      MAIL_USER: string,
+      MAIL_PASSWORD: string
     }
   }
 }
