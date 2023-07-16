@@ -5,7 +5,7 @@ import { CreateUserUseCase } from "./createUserUseCase";
 import { User } from "../../../../domain/entities/user";
 import { AppError } from '../../../../shared/errors';
 import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from '../../../../tests/adapters';
-import { InMemoryUserTokenRepository, InMemoryUsersRepository } from '../../../../tests/repositories';
+import { InMemoryActivateCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository } from '../../../../tests/repositories';
 import { IUsersRepository } from '../../../repositories';
 
 
@@ -14,10 +14,11 @@ describe('create an user', () => {
     const makeSut = (): { sut: CreateUserUseCase, usersRepository: IUsersRepository } => {
         const usersRepository = new InMemoryUsersRepository()
         const userTokenRepository = new InMemoryUserTokenRepository()
+        const activateCodeRepository = new InMemoryActivateCodeRepository()
         const hashAdapter = new InMemoryHashAdapter();
         const securityAdapter = new InMemorySecurityAdapter()
         const mailAdapter = new InMemoryMailAdapter()
-        const sut = new CreateUserUseCase(usersRepository, userTokenRepository, hashAdapter, securityAdapter, mailAdapter)
+        const sut = new CreateUserUseCase(usersRepository, userTokenRepository, activateCodeRepository, hashAdapter, securityAdapter, mailAdapter)
 
         return { sut, usersRepository }
     }

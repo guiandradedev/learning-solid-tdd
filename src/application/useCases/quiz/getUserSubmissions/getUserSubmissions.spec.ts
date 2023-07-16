@@ -2,7 +2,7 @@ import 'dotenv/config'
 import 'reflect-metadata'
 
 import { describe, expect, expectTypeOf, it } from "vitest";
-import { InMemorySubmissionsRepository, InMemoryUsersRepository,    InMemoryQuizRepository,    InMemoryQuestionsRepository,    InMemoryUserTokenRepository } from "../../../../tests/repositories";
+import { InMemorySubmissionsRepository, InMemoryUsersRepository,    InMemoryQuizRepository,    InMemoryQuestionsRepository,    InMemoryUserTokenRepository, InMemoryActivateCodeRepository } from "../../../../tests/repositories";
 import { CreateSubmissionUseCase } from "../../quiz/createSubmission/createSubmissionUseCase";
 import { CreateUserUseCase } from "../../user/createUser/createUserUseCase";
 import { CreateQuizUseCase } from "../../quiz/createQuiz/createQuizUseCase";
@@ -35,7 +35,8 @@ describe("Get user submissions", () => {
         const hashAdapter = new InMemoryHashAdapter();
         const securityAdapter = new InMemorySecurityAdapter()
         const mailAdapter = new InMemoryMailAdapter()
-        const sutUser = new CreateUserUseCase(usersRepository, userTokenRepository, hashAdapter, securityAdapter, mailAdapter)
+        const activateCodeRepository = new InMemoryActivateCodeRepository()
+        const sutUser = new CreateUserUseCase(usersRepository, userTokenRepository, activateCodeRepository, hashAdapter, securityAdapter, mailAdapter)
 
         const user1 = await sutUser.execute({
             email: "flaamer@gmail.com",

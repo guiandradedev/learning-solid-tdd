@@ -8,7 +8,7 @@ import { CreateUserUseCase } from "../../user/createUser/createUserUseCase";
 import { IQuizRepository, IQuestionRepository } from "../../../repositories";
 import { AppError } from '../../../../shared/errors';
 import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from '../../../../tests/adapters';
-import { InMemoryQuestionsRepository, InMemoryQuizRepository, InMemoryUsersRepository, InMemoryUserTokenRepository } from '../../../../tests/repositories';
+import { InMemoryActivateCodeRepository, InMemoryQuestionsRepository, InMemoryQuizRepository, InMemoryUsersRepository, InMemoryUserTokenRepository } from '../../../../tests/repositories';
 
 
 /*
@@ -21,14 +21,15 @@ import { InMemoryQuestionsRepository, InMemoryQuizRepository, InMemoryUsersRepos
  */
 
 describe("Quiz", async () => {
-    it('', ()=>{})
+    it('', () => { })
 
     const usersRepository = new InMemoryUsersRepository()
     const userTokenRepository = new InMemoryUserTokenRepository()
     const hashAdapter = new InMemoryHashAdapter()
     const securityAdapter = new InMemorySecurityAdapter()
     const mailAdapter = new InMemoryMailAdapter()
-    const userAdapter = new CreateUserUseCase(usersRepository, userTokenRepository, hashAdapter, securityAdapter, mailAdapter)
+    const activateCodeRepository = new InMemoryActivateCodeRepository()
+    const userAdapter = new CreateUserUseCase(usersRepository, userTokenRepository, activateCodeRepository, hashAdapter, securityAdapter, mailAdapter)
 
     const user1 = await userAdapter.execute({
         email: "flaamer@gmail.com",

@@ -2,7 +2,7 @@ import 'reflect-metadata'
 
 import { describe, expect, it, vitest } from "vitest";
 import { AuthMiddlewareService } from "./authMiddlewareService";
-import { InMemoryUserTokenRepository, InMemoryUsersRepository } from "../../../../tests/repositories";
+import { InMemoryActivateCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository } from "../../../../tests/repositories";
 import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from "../../../../tests/adapters";
 import { CreateUserUseCase } from "../../../../application/useCases/user/createUser/createUserUseCase";
 import { User } from "../../../../domain/entities";
@@ -26,7 +26,8 @@ describe("AuthMiddlewareService", () => {
         const hashAdapter = new InMemoryHashAdapter();
         const securityAdapter = new InMemorySecurityAdapter()
         const mailAdapter = new InMemoryMailAdapter()
-        const userSut = new CreateUserUseCase(usersRepository, userTokenRepository, hashAdapter, securityAdapter, mailAdapter)
+        const activateCodeRepository = new InMemoryActivateCodeRepository()
+        const userSut = new CreateUserUseCase(usersRepository, userTokenRepository, activateCodeRepository, hashAdapter, securityAdapter, mailAdapter)
         const user = await userSut.execute({
             name: "Flaamer",
             email: "teste@teste.com",

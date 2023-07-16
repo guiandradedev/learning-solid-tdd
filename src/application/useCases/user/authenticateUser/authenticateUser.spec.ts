@@ -3,7 +3,7 @@ import 'dotenv/config'
 
 import { describe, expect, it } from "vitest";
 import { AppError } from '../../../../shared/errors';
-import { InMemoryUserTokenRepository, InMemoryUsersRepository } from "../../../../tests/repositories";
+import { InMemoryActivateCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository } from "../../../../tests/repositories";
 import { AuthenticateUserUseCase, UserTokenResponse } from "./authenticateUserUseCase";
 import { CreateUserUseCase } from "../createUser/createUserUseCase";
 import { User, UserToken } from '../../../../domain/entities';
@@ -19,7 +19,8 @@ describe('Authentication', async () => {
         const hashAdapter = new InMemoryHashAdapter();
         const securityAdapter = new InMemorySecurityAdapter()
         const mailAdapter = new InMemoryMailAdapter()
-        const sutUser = new CreateUserUseCase(usersRepository, userTokenRepository, hashAdapter, securityAdapter, mailAdapter)
+        const activateCodeRepository = new InMemoryActivateCodeRepository()
+        const sutUser = new CreateUserUseCase(usersRepository, userTokenRepository, activateCodeRepository, hashAdapter, securityAdapter, mailAdapter)
         const sut = new AuthenticateUserUseCase(usersRepository, userTokenRepository, hashAdapter, securityAdapter)
 
         return { sut, sutUser, usersRepository, userTokenRepository, securityAdapter, hashAdapter }
