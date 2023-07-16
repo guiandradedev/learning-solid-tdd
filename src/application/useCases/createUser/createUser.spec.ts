@@ -14,7 +14,7 @@ describe('create an user', () => {
     const makeSut = (): { sut: CreateUserUseCase, usersRepository: IUsersRepository } => {
         const usersRepository = new InMemoryUsersRepository()
         const userTokenRepository = new InMemoryUserTokenRepository()
-        const hashAdapter = new InMemoryHashAdapter(12);
+        const hashAdapter = new InMemoryHashAdapter();
         const securityAdapter = new InMemorySecurityAdapter()
         const sut = new CreateUserUseCase(usersRepository, userTokenRepository, hashAdapter, securityAdapter)
 

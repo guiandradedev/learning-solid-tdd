@@ -36,8 +36,7 @@ export class CreateUserUseCase {
 
         const user = User.create({ name, email, password })
 
-        console.log(user, password)
-        // await this.usersRepository.create(user)
+        await this.usersRepository.create(user)
 
         const sessionService = new CreateSession(this.securityAdapter)
         const { accessToken, refreshToken, refreshTokenExpiresDate, accessTokenExpiresDate } = await sessionService.execute(email, user.id)
@@ -48,7 +47,7 @@ export class CreateUserUseCase {
             refreshToken,
             userId: user.id
         })
-        // await this.userTokenRepository.create(userToken)
+        await this.userTokenRepository.create(userToken)
 
         const userWithToken = Object.assign(user, { token: {
             accessToken,

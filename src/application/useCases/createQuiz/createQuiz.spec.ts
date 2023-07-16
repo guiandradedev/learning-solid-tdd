@@ -25,7 +25,7 @@ describe("Quiz", async () => {
 
     const usersRepository = new InMemoryUsersRepository()
     const userTokenRepository = new InMemoryUserTokenRepository()
-    const hashAdapter = new InMemoryHashAdapter(12)
+    const hashAdapter = new InMemoryHashAdapter()
     const securityAdapter = new InMemorySecurityAdapter()
     const userAdapter = new CreateUserUseCase(usersRepository, userTokenRepository, hashAdapter, securityAdapter)
 
