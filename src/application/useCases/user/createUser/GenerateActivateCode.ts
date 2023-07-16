@@ -9,7 +9,7 @@ type GenerateActivateCodeRequest = {
 }
 
 export class GenerateActivateCode {
-    execute({ type, size }: GenerateActivateCodeRequest): string | number {
+    execute({ type, size }: GenerateActivateCodeRequest): string {
         switch (type) {
             case TypeCode.string: {
                 let code = ""
@@ -24,7 +24,7 @@ export class GenerateActivateCode {
                     number += Math.floor(Math.random() * 9);
                 }
 
-                return Number(number)
+                return number
             }
             default: {
                 let code = Math.random().toString(36).substring(-size).toUpperCase();
