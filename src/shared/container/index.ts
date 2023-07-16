@@ -12,6 +12,11 @@ import { IUserTokenRepository } from "../../application/repositories/IUserTokenR
 import { ISubmissionRepository } from "../../application/repositories/ISubmissionRepository";
 import { PrismaSubmissionRepository } from "../../infra/repositories/Prisma/PrismaSubmissionRepository";
 
+import { HashAdapter, BcryptHashAdapter } from "../adapters/hash";
+import { JwtSecurityAdapter, SecurityAdapter } from "../adapters/security";
+import { InMemoryHashAdapter } from "../../tests/adapters";
+
+//Repositories
 container.registerSingleton<IUsersRepository>(
     "UsersRepository",
     PrismaUserRepository
@@ -35,4 +40,17 @@ container.registerSingleton<IUserTokenRepository>(
 container.registerSingleton<ISubmissionRepository>(
     "SubmissionRepository",
     PrismaSubmissionRepository
+)
+
+
+//Adapters
+const bcryptadapter = new BcryptHashAdapter(12)
+container.registerInstance<HashAdapter>(
+    "HashAdapter",
+    bcryptadapter
+)
+
+container.registerSingleton<SecurityAdapter>(
+    "SecurityAdapter",
+    JwtSecurityAdapter
 )

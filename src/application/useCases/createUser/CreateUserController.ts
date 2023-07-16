@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { container } from "tsyringe";
 
 import { CreateUserUseCase } from "./createUserUseCase";
-import { AppError, ErrInternalServerError, ErrInvalidData } from "shared/errors";
+import { AppError, ErrInternalServerError, ErrInvalidData } from "../../../shared/errors";
 
 export class CreateUserController {
 
@@ -25,6 +25,7 @@ export class CreateUserController {
             if(error instanceof AppError) {
                 return response.status(500).json({ errors: [error] })
             }
+            console.log(error)
             return response.status(500).json({erros: [ErrInternalServerError]})
         }
     }

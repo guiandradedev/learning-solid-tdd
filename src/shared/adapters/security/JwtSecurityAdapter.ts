@@ -1,4 +1,4 @@
-import { SecurityDecryptResponse, SecurityAdapter } from "shared/adapters"
+import { SecurityDecryptResponse, SecurityAdapter } from "../../../shared/adapters"
 import jwt, { JwtPayload } from 'jsonwebtoken'
 
 interface EncryptOptions {

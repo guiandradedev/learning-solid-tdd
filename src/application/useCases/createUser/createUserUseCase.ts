@@ -4,7 +4,7 @@ import { IUsersRepository, IUserTokenRepository } from "../../repositories";
 import { CreateSession } from "../../services/SessionService";
 import { UserAuthenticatetedResponse } from "../authenticateUser/authenticateUserUseCase";
 import { AppError } from "../../../shared/errors";
-import { HashAdapter, SecurityAdapter } from "shared/adapters";
+import { HashAdapter, SecurityAdapter } from "../../../shared/adapters";
 
 type CreateUserRequest = {
     name: string,
@@ -35,7 +35,9 @@ export class CreateUserUseCase {
         password = passwordHash;
 
         const user = User.create({ name, email, password })
-        await this.usersRepository.create(user)
+
+        console.log(user, password)
+        // await this.usersRepository.create(user)
 
         const sessionService = new CreateSession(this.securityAdapter)
         const { accessToken, refreshToken, refreshTokenExpiresDate, accessTokenExpiresDate } = await sessionService.execute(email, user.id)
@@ -46,7 +48,7 @@ export class CreateUserUseCase {
             refreshToken,
             userId: user.id
         })
-        await this.userTokenRepository.create(userToken)
+        // await this.userTokenRepository.create(userToken)
 
         const userWithToken = Object.assign(user, { token: {
             accessToken,
