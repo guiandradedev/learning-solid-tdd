@@ -5,7 +5,7 @@ import { CreateSession } from "../../../services/SessionService";
 import { UserAuthenticatetedResponse } from "../authenticateUser/authenticateUserUseCase";
 import { AppError } from "../../../../shared/errors";
 import { HashAdapter, SecurityAdapter, MailAdapter } from "../../../../shared/adapters";
-import { GenerateActivateCode, TypeCode } from './GenerateActivateCode'
+import { GenerateActivateCode, TypeCode } from '../activateUser/GenerateActivateCode'
 import { SendUserMail } from "../../../../shared/helpers/mail/SendUserMail";
 
 type CreateUserRequest = {
@@ -13,6 +13,13 @@ type CreateUserRequest = {
     email: string
     password: string,
     active?: boolean
+}
+
+export interface CreateUserResponse extends UserAuthenticatetedResponse {
+    code: {
+        code: string,
+        expiresIn: Date
+    }
 }
 
 @injectable()
@@ -37,7 +44,7 @@ export class CreateUserUseCase {
         private mailAdapter: MailAdapter
     ) { }
 
-    async execute({ name, email, password, active }: CreateUserRequest): Promise<UserAuthenticatetedResponse> {
+    async execute({ name, email, password, active }: CreateUserRequest): Promise<CreateUserResponse> {
         const userAlreadyExists = await this.usersRepository.findByEmail(email)
         if (userAlreadyExists) throw new AppError({ title: "ERR_USER_ALREADY_EXISTS", message: "User already exists", status: 500 })
 
@@ -59,19 +66,13 @@ export class CreateUserUseCase {
         })
         await this.userTokenRepository.create(userToken)
 
-        const userWithToken = Object.assign(user, {
-            token: {
-                accessToken,
-                refreshToken
-            }
-        })
-
         const generateActivateCode = new GenerateActivateCode()
-        const code = generateActivateCode.execute({ type: TypeCode.string, size: 6 })
+        const {code, expiresIn} = generateActivateCode.execute({ type: TypeCode.string, size: 6 })
 
         const activateCode = ActivateCode.create({
-            active: false,
+            active: true,
             code,
+            expiresIn,
             createdAt: new Date(),
             userId: user.id
         })
@@ -80,6 +81,17 @@ export class CreateUserUseCase {
         const sendUserMail = new SendUserMail(this.mailAdapter)
         sendUserMail.authMail({to: email, code})
 
-        return userWithToken;
+        const userReturn = Object.assign(user, {
+            token: {
+                accessToken,
+                refreshToken
+            },
+            code: {
+                code,
+                expiresIn
+            }
+        })
+
+        return userReturn;
     }
 }

@@ -31,10 +31,11 @@
     "@types/nodemailer": "^6.4.8",
     "@types/uuid": "^9.0.2",
     "nodemailer-mock": "^2.0.1",
+    "tsconfig-paths": "^4.2.0",
     "vitest": "^0.32.4"
   },
   "scripts": {
     "test": "vitest",
-    "dev": "tsnd --respawn --transpile-only src/infra/http/server.ts"
+    "dev": "tsnd --respawn --transpile-only -r tsconfig-paths/register src/infra/http/server.ts"
   }
 }

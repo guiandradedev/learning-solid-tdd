@@ -6,30 +6,35 @@ export enum TypeCode {
 type GenerateActivateCodeRequest = {
     type: TypeCode,
     size: number,
+    expiresIn?: Date
 }
 
 export class GenerateActivateCode {
-    execute({ type, size }: GenerateActivateCodeRequest): string {
+    execute({ type, size, expiresIn }: GenerateActivateCodeRequest): {code: string, expiresIn: Date} {
+        let code = ""
         switch (type) {
             case TypeCode.string: {
-                let code = ""
                 for(let i=0; i<size; i++) {
                     code += String.fromCharCode(65+Math.floor(Math.random() * 26));
                 }
-                return code
+                break;
             }
             case TypeCode.number: {
-                let number = ""
                 for(let i=0; i<size; i++) {
-                    number += Math.floor(Math.random() * 9);
+                    code += Math.floor(Math.random() * 9);
                 }
-
-                return number
+                break;
             }
             default: {
-                let code = Math.random().toString(36).substring(-size).toUpperCase();
-                return code
+                code = Math.random().toString(36).substring(-size).toUpperCase();
+                break;
             }
+        }
+        const date = new Date();
+        date.setHours(date.getHours() + 3);
+        return {
+            code,
+            expiresIn: expiresIn ?? date
         }
     }
 }

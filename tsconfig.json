@@ -1,4 +1,7 @@
 {
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  },
   "compilerOptions": {
     "target": "es2017",                         
     "module": "commonjs",                       
@@ -10,20 +13,21 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "typeRoots": ["./node_modules/@types", "src/@types"],     
-    "rootDir": "./src",
-    "baseUrl": "./src",
+    "rootDir": "src",
+    "baseUrl": "src",
     "paths": {
-      "@types/": ["types/"],
-      "@application/": ["application/"],
-      "@core/": ["core/"],
-      "@domain/": ["domain/"],
-      "@infra/": ["infra/"],
-      "@shared/": ["shared/"],
+      "@/types/*": ["types/*"],
+      "@/application/*": ["application/*"],
+      "@/core/*": ["core/*"],
+      "@/domain/*": ["domain/*"],
+      "@/infra/*": ["infra/*"],
+      "@/shared/*": ["shared/*"],
+      "@/tests/*": ["tests/*"]
     },
     "outDir": "./dist",
     "strictNullChecks": false,
     "strictPropertyInitialization": false,
     "useUnknownInCatchVariables": false,        
   },
-  "include": ["src"]
+  "include": ["./src"]
 }

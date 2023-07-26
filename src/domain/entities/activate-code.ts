@@ -1,9 +1,10 @@
-import { Entity } from "../../core/domain/Entity";
+import { Entity } from "./entity";
 
 export type ActivateCodeProps = {
     userId: string,
     code: string,
     active: boolean,
+    expiresIn: Date,
     createdAt: Date
 }
 

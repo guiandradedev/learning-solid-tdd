@@ -3,6 +3,7 @@ import { describe, expect, it, vitest } from "vitest";
 import { CreateSession } from "./SessionService";
 import { SecurityAdapter, SecurityDecryptResponse } from '../../shared/adapters';
 import { InMemorySecurityAdapter } from '../../tests/adapters/InMemorySecurityAdapter';
+import { AppError } from '@shared/errors';
 
 describe("Session Service", async () => {
     type TypeSut = {
@@ -38,14 +39,18 @@ describe("Session Service", async () => {
         expect(verifyAccess.expiresIn).toBeLessThanOrEqual(Date.now() + Number(process.env.EXPIRES_IN_TOKEN));
     })
 
-    // it('should throw an error if an adapter error occurs', async () => {
-    //     const { createSession, securityAdapter } = makeSut()
-    //     const userId = 'fake_user_id'
+    it('should throw an error if an adapter error occurs', async () => {
+        // const { createSession, securityAdapter } = makeSut()
+        // const userId = 'fake_user_id'
 
-    //     vitest.spyOn(createSession.securityAdapter, 'encrypt').mockReturnValueOnce(new Error())
+        // vitest.spyOn(securityAdapter, 'encrypt').mockRejectedValueOnce(new Error())
 
-    //     const { accessToken, refreshToken } = await createSession.execute('fake_email@email.com', userId)
+        // const a = await createSession.execute('fake_email@email.com', userId)
+
+        // console.log(a)
+
+        // expect(a).toBeInstanceOf(AppError)
 
         
-    // })
+    })
 })

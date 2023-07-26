@@ -8,7 +8,19 @@ export class InMemoryActivateCodeRepository implements IActivateCodeRepository {
         this.codes.push(data)
     }
 
-    async findByCodeAndUserId(data: FindByCodeAndUserId): Promise<ActivateCode> {
-        return ActivateCode.create({active: false, code: "", createdAt: new Date(), userId: ""})
+    async findByCodeAndUserId({code, userId}: FindByCodeAndUserId): Promise<ActivateCode> {
+        const data = this.codes.find((c)=>c.props.code == code && c.props.userId == userId)
+
+        if(!data) return null;
+
+        return data;
+    }
+
+    async changeCodeStatus(id: string): Promise<boolean> {
+        const data = this.codes.find(c=>c.id==id)
+        if(!data) return null;
+        const status = !data.props.active
+        data.props.active = status
+        return status;
     }
 }
