@@ -18,15 +18,6 @@ export class InMemoryQuizRepository implements IQuizRepository {
 
     async list(request?: QuizRequestRepository): Promise<Quiz[] | null> {
         if(this.quizzes.length == 0) return null;
-
-        // if(request) {
-        //     const options = Object.entries(request.include)
-            
-        //     for(const [index, option] of options.entries()) {
-        //         console.log(index)
-        //     }
-        // }
-
         return this.quizzes
     }
 
