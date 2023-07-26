@@ -1,9 +1,9 @@
-import { QuestionProps, Quiz } from "../../../../domain/entities";
+import { Question, Quiz } from "../../../../domain/entities";
 import { AppError } from "../../../../shared/errors";
 import { IQuizRepository, IQuestionRepository } from "../../../repositories/";
 
 interface ReturnQuiz extends Quiz{
-    questions: QuestionProps[]
+    questions: Question[]
 }
 
 export class GetQuizzesUseCase {
@@ -17,14 +17,13 @@ export class GetQuizzesUseCase {
 
         if (!quizzes) throw new AppError({ title: "ERR_QUIZ_NOT_FOUND", message: "Quiz not found", status: 500 })
 
-        const qzs: ReturnQuiz[] = [];;
-
+        const qzs: ReturnQuiz[] = [];
+        
         for(const q of quizzes) {
-            const questions: QuestionProps[] = []
-            const a: ReturnQuiz = Object.assign(q, {
+            const questions = await this.questionsRepository.findByQuizId(q.id)
+            qzs.push(Object.assign(q, {
                 questions
-            })
-            qzs.push(a)
+            }))
         }
 
         return qzs
