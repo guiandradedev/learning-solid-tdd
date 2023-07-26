@@ -8,6 +8,7 @@ import { Quiz } from "@/domain/entities/quiz";
 import { GetQuizUseCase } from './getQuizUseCase';
 import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from '@/tests/adapters';
 import { InMemoryActivateCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository, InMemoryQuizRepository, InMemoryQuestionsRepository } from '@/tests/repositories';
+import { AppError } from '@/shared/errors';
 
 describe("Get Quiz", async () => {
     it('should return a quiz', async () => {
@@ -57,5 +58,14 @@ describe("Get Quiz", async () => {
 
         expect(quiz).toBeInstanceOf(Quiz)
     })
-    // it('should throw an error if the quiz does not exists', async () => { })
+    it('should throw an error if the quiz does not exists', async () => {
+        const quizRepository = new InMemoryQuizRepository()
+        const questionsRepository = new InMemoryQuestionsRepository()
+        const sut = new GetQuizUseCase(quizRepository, questionsRepository)
+        const quiz = sut.execute({
+            quizId: 'fake_quiz_id'
+        })
+        
+        expect(quiz).rejects.toBeInstanceOf(AppError)
+    })
 })
