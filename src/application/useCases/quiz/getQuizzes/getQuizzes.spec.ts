@@ -18,16 +18,7 @@ describe("Get Quizzes", async () => {
      * - Deve retornar todos os quizzes armazenados
      * - Deve retornar um erro caso não exista quizzes armazenados
      */
-
-    type returnSut = {
-        sut: GetQuizzesUseCase,
-        QuizRepository: InMemoryQuizRepository,
-        QuestionRepository: InMemoryQuestionsRepository,
-        sutQuiz: CreateQuizUseCase,
-        user: User
-    }
-
-    const makeSut = async (): Promise<returnSut> => {
+    const makeSut = async () => {
         const usersRepository = new InMemoryUsersRepository()
         const userTokenRepository = new InMemoryUserTokenRepository()
         const hashAdapter = new InMemoryHashAdapter();
@@ -46,32 +37,34 @@ describe("Get Quizzes", async () => {
         const QuestionRepository = new InMemoryQuestionsRepository();
         const sutQuiz = new CreateQuizUseCase(QuizRepository, QuestionRepository, usersRepository)
 
+        const quizQuestions = [
+            {
+                question: "Qual a raiz de 16",
+                answers: ["4", "5", "6", "7"],
+                correctAnswer: 0
+            },
+            {
+                question: "Qual a raiz de 64",
+                answers: ["2", "4", "6", "8"],
+                correctAnswer: 3,
+            },
+            {
+                question: "Qual a raiz de 144",
+                answers: ["4", "8", "12", "16"],
+                correctAnswer: 2,
+            }
+        ]
+
         await sutQuiz.execute({
             title: "Matemática Básica",
             ownerId: user1.id,
-            questions: [
-                {
-                    question: "Qual a raiz de 16",
-                    answers: ["4", "5", "6", "7"],
-                    correctAnswer: 0
-                },
-                {
-                    question: "Qual a raiz de 64",
-                    answers: ["2", "4", "6", "8"],
-                    correctAnswer: 3,
-                },
-                {
-                    question: "Qual a raiz de 144",
-                    answers: ["4", "8", "12", "16"],
-                    correctAnswer: 2,
-                }
-            ],
+            questions: quizQuestions,
             createdAt: new Date()
         })
 
         const sut = new GetQuizzesUseCase(QuizRepository, QuestionRepository)
 
-        return { sut, QuizRepository, QuestionRepository, sutQuiz, user: user1 }
+        return { sut, QuizRepository, QuestionRepository, sutQuiz, user: user1, quizQuestions }
     }
 
     it('should return all stored quizzes', async () => {
@@ -94,33 +87,17 @@ describe("Get Quizzes", async () => {
     })
 
     it('should return all questions', async () => {
-        const { QuestionRepository, sutQuiz, user, sut } = await makeSut()
-
-        await sutQuiz.execute({
-            title: "Matemática Básica",
-            ownerId: user.id,
-            questions: [
-                {
-                    question: "Pergunta 1",
-                    answers: ["a", "b", "c", "d"],
-                    correctAnswer: 0
-                },
-                {
-                    question: "Pergunta 2",
-                    answers: ["a", "b", "c", "d"],
-                    correctAnswer: 3,
-                },
-                {
-                    question: "Pergunta 3",
-                    answers: ["a", "b", "c", "d"],
-                    correctAnswer: 2,
-                }
-            ],
-            createdAt: new Date()
-        })
+        const { quizQuestions, sut } = await makeSut()
 
         const quizzes = await sut.execute()
 
         expect(quizzes.every((quiz) => quiz.questions.every((question) => question instanceof Question))).toBe(true);
+
+        const questionsMapped = quizzes[0].questions.map((question)=>({
+            answers: question.props.answers,
+            correctAnswer: question.props.correctAnswer,
+            question: question.props.question
+        }))
+        expect(questionsMapped).toEqual(quizQuestions)
     })
 })
