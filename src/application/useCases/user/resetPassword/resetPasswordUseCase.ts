@@ -1,4 +1,7 @@
+import { IUserCodeRepository } from "@/application/repositories";
 import { User } from "@/domain/entities";
+import { ErrNotFound } from "@/shared/errors";
+import { inject, injectable } from "tsyringe";
 
 type ResetPasswordRequest = {
     code: string,
@@ -6,10 +9,17 @@ type ResetPasswordRequest = {
     confirmPassword: string
 }
 
+@injectable()
 export class ResetPasswordUseCase {
-    constructor(){}
+    constructor(
+        @inject('userCodeRepository')
+        private userCodeRepository: IUserCodeRepository,
+    ){}
 
-    async execute({}: ResetPasswordRequest): Promise<User> {
+    async execute({code}: ResetPasswordRequest): Promise<User> {
+        const codeExists = await this.userCodeRepository.findByCode({code, type: 'FORGOT_PASSWORD'})
+        if(!codeExists) throw new ErrNotFound('code')
+
         return User.create({
             name: "",
             email: "",

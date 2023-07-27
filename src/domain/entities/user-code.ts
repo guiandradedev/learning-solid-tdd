@@ -1,11 +1,14 @@
 import { Entity } from "./entity";
 
+export type TypesUserCode = 'ACTIVATE_ACCOUNT' | 'FORGOT_PASSWORD'
+
 export type UserCodeProps = {
     userId: string,
     code: string,
     active: boolean,
     expiresIn: Date,
-    createdAt: Date
+    createdAt: Date,
+    type: TypesUserCode
 }
 
 export class UserCode extends Entity<UserCodeProps> {

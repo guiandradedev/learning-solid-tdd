@@ -82,7 +82,8 @@ export class CreateUserUseCase {
                 code,
                 expiresIn,
                 createdAt: new Date(),
-                userId: user.id
+                userId: user.id,
+                type: "ACTIVATE_ACCOUNT"
             })
             await this.UserCodeRepository.create(userCode)
     
