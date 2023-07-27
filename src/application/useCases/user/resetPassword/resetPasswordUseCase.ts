@@ -6,7 +6,7 @@ import { ErrExpired } from "@/shared/errors/ErrExpired";
 import { SendUserMail } from "@/shared/helpers/mail/SendUserMail";
 import { inject, injectable } from "tsyringe";
 
-type ResetPasswordRequest = {
+export type ResetPasswordRequest = {
     code: string,
     password: string,
     confirmPassword: string
@@ -18,7 +18,7 @@ export class ResetPasswordUseCase {
         @inject('UsersRepository')
         private usersRepository: IUsersRepository,
 
-        @inject('userCodeRepository')
+        @inject('UserCodeRepository')
         private userCodeRepository: IUserCodeRepository,
 
         @inject('MailAdapter')

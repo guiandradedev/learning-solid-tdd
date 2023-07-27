@@ -1,4 +1,4 @@
-import { ErrInvalidData, ErrSendMail } from "../../../shared/errors";
+import { ErrInvalidParam, ErrServerError } from "../../../shared/errors";
 import { CreateMailConnectionRequest, MailAdapter, SendMailRequest } from "./mail";
 import nodemailer, { Transporter } from 'nodemailer'
 
@@ -25,7 +25,7 @@ export class NodemailerMailAdapter implements MailAdapter {
         if ('host' in _options) {
             this.createConnection({auth: _options.auth, host: _options.host, port: _options.port})
         } else {
-            if (!this.transporter) throw ErrInvalidData
+            if (!this.transporter) throw new ErrInvalidParam('mail data')
         }
 
         try {
@@ -39,7 +39,7 @@ export class NodemailerMailAdapter implements MailAdapter {
 
             return true;
         } catch (error) {
-            throw ErrSendMail
+            throw new ErrServerError()
         }
     }
 }

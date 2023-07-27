@@ -5,7 +5,7 @@ import { User, UserToken } from "../../../../domain/entities";
 import { ErrNotFound, ErrNotActive } from "../../../../shared/errors";
 import { HashAdapter, SecurityAdapter } from "../../../../shared/adapters";
 
-type AuthenticateUserRequest = {
+export type AuthenticateUserRequest = {
     email: string,
     password: string
 }
@@ -55,7 +55,9 @@ export class AuthenticateUserUseCase {
         })
         await this.userTokenRepository.create(userToken)
 
-        const userWithToken = Object.assign(user, {
+        const newUserInstance = User.create({...user.props}, user.id)
+
+        const userWithToken = Object.assign(newUserInstance, {
             token: {
                 accessToken,
                 refreshToken

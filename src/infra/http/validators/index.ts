@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { validationResult } from 'express-validator'
 import { deleteFile } from '../../../shared/utils/file'
 import { IError } from '../../../@types/error.types'
+import { ErrInvalidParam } from '@/shared/errors'
 
 export const validateRules = (req: Request, res: Response, next: NextFunction) => {
     const errorsRequest = validationResult(req)
@@ -15,11 +16,7 @@ export const validateRules = (req: Request, res: Response, next: NextFunction) =
 
     const errors: IError[] = []
     errorsRequest.array().map(err => {
-        errors.push({
-            message: err.msg,
-            title: "ERR_INVALID_DATA",
-            status: 422
-        })
+        errors.push(new ErrInvalidParam(err.msg))
     })
 
     return res.status(422).json({ errors: [errors] });

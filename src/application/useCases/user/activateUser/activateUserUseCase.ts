@@ -18,7 +18,7 @@ export class ActivateUserUseCase {
         @inject('UsersRepository')
         private userRepository: IUsersRepository,
 
-        @inject('userCodeRepository')
+        @inject('UserCodeRepository')
         private userCodeRepository: IUserCodeRepository,
 
         @inject('MailAdapter')

@@ -1,48 +1,54 @@
 import { container } from "tsyringe";
 
-import { PrismaUserRepository } from "../../infra/repositories/Prisma/PrismaUserRepository";
-import { PrismaQuizRepository } from "../../infra/repositories/Prisma/PrismaQuizRepository";
-import { PrismaQuestionRepository } from "../../infra/repositories/Prisma/PrismaQuestionRepository";
-import { PrismaUserTokenRepository } from "../../infra/repositories/Prisma/PrismaUserTokenRepository";
+// import { PrismaUserRepository } from "../../infra/repositories/Prisma/PrismaUserRepository";
+// import { PrismaQuizRepository } from "../../infra/repositories/Prisma/PrismaQuizRepository";
+// import { PrismaQuestionRepository } from "../../infra/repositories/Prisma/PrismaQuestionRepository";
+// import { PrismaUserTokenRepository } from "../../infra/repositories/Prisma/PrismaUserTokenRepository";
+// import { PrismaSubmissionRepository } from "../../infra/repositories/Prisma/PrismaSubmissionRepository";
 
 import { IUsersRepository } from "../../application/repositories/IUsersRepository";
 import { IQuizRepository } from "../../application/repositories/IQuizRepository";
 import { IQuestionRepository } from "../../application/repositories/IQuestionRepository";
 import { IUserTokenRepository } from "../../application/repositories/IUserTokenRepository";
 import { ISubmissionRepository } from "../../application/repositories/ISubmissionRepository";
-import { PrismaSubmissionRepository } from "../../infra/repositories/Prisma/PrismaSubmissionRepository";
 
 import { HashAdapter, BcryptHashAdapter } from "../adapters/hash";
 import { JwtSecurityAdapter, SecurityAdapter } from "../adapters/security";
 import { MailAdapter } from "../adapters/mail";
 import { NodemailerMailAdapter } from "../adapters/mail/NodemailerMailAdapter";
+import { InMemoryQuestionsRepository, InMemoryQuizRepository, InMemorySubmissionsRepository, InMemoryUserCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository } from "@/tests/repositories";
+import { IUserCodeRepository } from "@/application/repositories";
 
 //Repositories
 container.registerSingleton<IUsersRepository>(
     "UsersRepository",
-    PrismaUserRepository
+    InMemoryUsersRepository
 )
 
 container.registerSingleton<IQuizRepository>(
     "QuizRepository",
-    PrismaQuizRepository
+    InMemoryQuizRepository
 )
 
 container.registerSingleton<IQuestionRepository>(
     "QuestionRepository",
-    PrismaQuestionRepository
+    InMemoryQuestionsRepository
 )
 
 container.registerSingleton<IUserTokenRepository>(
     "UserTokenRepository",
-    PrismaUserTokenRepository
+    InMemoryUserTokenRepository
 )
 
 container.registerSingleton<ISubmissionRepository>(
     "SubmissionRepository",
-    PrismaSubmissionRepository
+    InMemorySubmissionsRepository
 )
 
+container.registerSingleton<IUserCodeRepository>(
+    "UserCodeRepository",
+    InMemoryUserCodeRepository
+)
 
 //Adapters
 const bcryptadapter = new BcryptHashAdapter(12)

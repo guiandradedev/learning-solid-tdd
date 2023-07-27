@@ -6,7 +6,7 @@ import { ErrNotActive, ErrNotFound } from "@/shared/errors";
 import { SendUserMail } from "@/shared/helpers/mail/SendUserMail";
 import { inject, injectable } from "tsyringe";
 
-type ResetPasswordRequest = {
+export type ForgotPasswordRequest = {
     email: string
 }
 
@@ -16,14 +16,14 @@ export class ForgotPasswordUseCase {
         @inject('UsersRepository')
         private usersRepository: IUsersRepository,
 
-        @inject('userCodeRepository')
+        @inject('UserCodeRepository')
         private userCodeRepository: IUserCodeRepository,
 
         @inject('MailAdapter')
         private mailAdapter: MailAdapter
     ) { }
 
-    async execute({ email }: ResetPasswordRequest): Promise<UserCode> {
+    async execute({ email }: ForgotPasswordRequest): Promise<UserCode> {
         const userExists = await this.usersRepository.findByEmail(email)
         if (!userExists) throw new ErrNotFound('user')
         
@@ -45,8 +45,10 @@ export class ForgotPasswordUseCase {
         })
         await this.userCodeRepository.create(userCode)
 
-        const sendUserMail = new SendUserMail(this.mailAdapter)
-        await sendUserMail.resetPasswordMail({ to: email, code })
+        // const sendUserMail = new SendUserMail(this.mailAdapter)
+        // await sendUserMail.resetPasswordMail({ to: email, code })
+
+        console.log("Forgot: "+ code)
 
         return userCode
     }

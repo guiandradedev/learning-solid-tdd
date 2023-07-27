@@ -1,4 +1,4 @@
-import { ErrInternalServerError, ErrTokenInvalid, ErrTokenNotProvided } from "../../../shared/errors"
+import { ErrInvalidParam, ErrMissingParam, ErrServerError } from "@/shared/errors"
 import { SecurityDecryptResponse, SecurityAdapter } from "../../../shared/adapters"
 import jwt, { JwtPayload } from 'jsonwebtoken'
 
@@ -27,14 +27,14 @@ export class JwtSecurityAdapter implements SecurityAdapter {
         } catch (error) {
             if(error instanceof Error) {
                 if(error.message === "jwt expired" || error.message === "invalid signature") {
-                    throw ErrTokenInvalid
+                    throw new ErrInvalidParam('token')
                 }
                 if(error.message == 'jwt must be provided') {
-                    throw ErrTokenNotProvided
+                    throw new ErrMissingParam('token')
                 }
-                throw ErrInternalServerError
+                throw new ErrServerError()
             }
-            throw ErrInternalServerError
+            throw new ErrServerError()
         }
     }
 }

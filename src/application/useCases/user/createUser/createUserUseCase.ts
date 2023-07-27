@@ -8,7 +8,7 @@ import { HashAdapter, SecurityAdapter, MailAdapter } from "../../../../shared/ad
 import { GenerateUserCode, TypeCode } from '../../../services/GenerateUserCode'
 import { SendUserMail } from "../../../../shared/helpers/mail/SendUserMail";
 
-type CreateUserRequest = {
+export type CreateUserRequest = {
     name: string,
     email: string
     password: string,
@@ -59,7 +59,9 @@ export class CreateUserUseCase {
         })
         await this.userTokenRepository.create(userToken)
 
-        const userReturn: UserAuthenticateResponse = Object.assign(user, {
+        const newUserInstance = User.create({...user.props}, user.id)
+
+        const userReturn: UserAuthenticateResponse = Object.assign(newUserInstance, {
             token: {
                 accessToken,
                 refreshToken
@@ -79,9 +81,11 @@ export class CreateUserUseCase {
                 type: "ACTIVATE_ACCOUNT"
             })
             await this.UserCodeRepository.create(userCode)
+
+            console.log(code)
     
-            const sendUserMail = new SendUserMail(this.mailAdapter)
-            await sendUserMail.authMail({to: email, code})
+            // const sendUserMail = new SendUserMail(this.mailAdapter)
+            // await sendUserMail.authMail({to: email, code})
         }
 
         return userReturn;
