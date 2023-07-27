@@ -10,7 +10,7 @@ import { SecurityAdapter } from '../../../../shared/adapters';
 import { IUsersRepository } from '@/application/repositories';
 import { UserAuthenticateResponse } from 'application/useCases/user/authenticateUser/authenticateUserUseCase';
 import { v4 as uuidv4 } from 'uuid';
-import { ErrInvalidParam, ErrNotFound } from '../../../../shared/errors';
+import { ErrInvalidParam, ErrNotActive, ErrNotFound } from '../../../../shared/errors';
 
 describe("AuthMiddlewareService", () => {
     type TypeSut = {
@@ -31,7 +31,8 @@ describe("AuthMiddlewareService", () => {
         const user = await userSut.execute({
             name: "Flaamer",
             email: "teste@teste.com",
-            password: "teste123"
+            password: "teste123", 
+            active: true
         })
 
         const sut = new AuthMiddlewareService(usersRepository, securityAdapter)
@@ -67,7 +68,19 @@ describe("AuthMiddlewareService", () => {
         
     })
 
-    // it('should')
+    it('should throw an error if user is not active', async () => {
+        const { sut, userSut } = await makeSut()
+        const user = await userSut.execute({
+            name: "Flaamer",
+            email: "teste1@teste.com",
+            password: "teste123", 
+            active: false
+        })
+
+        const userData = sut.execute({ token: user.token.accessToken })
+
+        expect(userData).rejects.toBeInstanceOf(ErrNotActive)
+    })
 })
 
 describe("AuthMiddlewareController", () => {
