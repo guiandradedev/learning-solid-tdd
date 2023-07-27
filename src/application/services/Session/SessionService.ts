@@ -1,11 +1,8 @@
 import 'reflect-metadata'
 
-import dayjs from "dayjs";
-import jwt from "jsonwebtoken";
-import { ITokens } from "../../@types/token.types";
-import { AppError } from '../../shared/errors/AppError';
-import { SecurityAdapter } from '../../shared/adapters';
 import { ErrServerError } from '@/shared/errors';
+import { SecurityAdapter } from '@/shared/adapters';
+import { ITokens } from "../../../@types/token.types";
 
 class CreateSession {
     constructor(

@@ -1,8 +1,8 @@
 import 'dotenv/config'
 import { describe, expect, it, vitest } from "vitest";
 import { CreateSession } from "./SessionService";
-import { SecurityAdapter, SecurityDecryptResponse } from '../../shared/adapters';
-import { InMemorySecurityAdapter } from '../../tests/adapters/InMemorySecurityAdapter';
+import { SecurityAdapter, SecurityDecryptResponse } from '../../../shared/adapters';
+import { InMemorySecurityAdapter } from '../../../tests/adapters/InMemorySecurityAdapter';
 
 describe("Session Service", async () => {
     type TypeSut = {
