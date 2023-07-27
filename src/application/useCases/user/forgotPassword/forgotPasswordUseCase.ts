@@ -1,6 +1,9 @@
 import { IUserCodeRepository, IUsersRepository } from "@/application/repositories";
-import { User, UserCode } from "@/domain/entities";
-import { ErrNotFound } from "@/shared/errors";
+import { GenerateUserCode, TypeCode } from "@/application/services/GenerateUserCode";
+import { UserCode } from "@/domain/entities";
+import { MailAdapter } from "@/shared/adapters";
+import { ErrNotActive, ErrNotFound } from "@/shared/errors";
+import { SendUserMail } from "@/shared/helpers/mail/SendUserMail";
 import { inject, injectable } from "tsyringe";
 
 type ResetPasswordRequest = {
@@ -15,16 +18,36 @@ export class ForgotPasswordUseCase {
 
         @inject('userCodeRepository')
         private userCodeRepository: IUserCodeRepository,
-    ){}
 
-    async execute({email}: ResetPasswordRequest): Promise<UserCode> {
-        return UserCode.create({
+        @inject('MailAdapter')
+        private mailAdapter: MailAdapter
+    ) { }
+
+    async execute({ email }: ResetPasswordRequest): Promise<UserCode> {
+        const userExists = await this.usersRepository.findByEmail(email)
+        if (!userExists) throw new ErrNotFound('user')
+
+        if (!userExists.props.active) {
+            //realizar operações para reenviar email para ativação da conta
+            throw new ErrNotActive('user')
+        }
+
+        const generateUserCode = new GenerateUserCode()
+        const { code, expiresIn } = generateUserCode.execute({ type: TypeCode.string, size: 6 })
+
+        const userCode = UserCode.create({
             active: true,
-            code: 'valid_code',
+            code,
+            expiresIn,
             createdAt: new Date(),
-            expiresIn: new Date(),
-            type: "FORGOT_PASSWORD",
-            userId: "valid_user_id"
+            userId: userExists.id,
+            type: "FORGOT_PASSWORD"
         })
+        await this.userCodeRepository.create(userCode)
+
+        const sendUserMail = new SendUserMail(this.mailAdapter)
+        await sendUserMail.resetPasswordMail({ to: email, code })
+
+        return userCode
     }
 }

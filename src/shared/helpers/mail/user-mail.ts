@@ -4,5 +4,6 @@ export type AuthMailRequest = {
 }
 
 export interface UserMail {
-    authMail(_options: AuthMailRequest): Promise<boolean>;
+    authMail(_options: AuthMailRequest): Promise<void>;
+    resetPasswordMail({ to, code }: AuthMailRequest): Promise<void>
 }
