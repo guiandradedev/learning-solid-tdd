@@ -2,7 +2,7 @@ import { inject, injectable } from "tsyringe";
 import { IUserTokenRepository, IUsersRepository } from "../../../repositories";
 import { CreateSession } from "../../../services/SessionService";
 import { User, UserToken } from "../../../../domain/entities";
-import { AppError, ErrNotFound, ErrUserNotActive } from "../../../../shared/errors";
+import { AppError, ErrNotFound, ErrNotActive } from "../../../../shared/errors";
 import { HashAdapter, SecurityAdapter } from "../../../../shared/adapters";
 
 type AuthenticateUserRequest = {
@@ -15,7 +15,7 @@ export interface UserTokenResponse {
     refreshToken: string
 }
 
-export interface UserAuthenticatetedResponse extends User {
+export interface UserAuthenticateResponse extends User {
     token: UserTokenResponse
 }
 
@@ -34,7 +34,7 @@ export class AuthenticateUserUseCase {
         private securityAdapter: SecurityAdapter
     ) { }
 
-    async execute({ email, password }: AuthenticateUserRequest): Promise<UserAuthenticatetedResponse> {
+    async execute({ email, password }: AuthenticateUserRequest): Promise<UserAuthenticateResponse> {
         const user = await this.userRepository.findByEmail(email)
 
         if (!user) throw new ErrNotFound('user')
@@ -42,7 +42,7 @@ export class AuthenticateUserUseCase {
         const checkPassword = await this.hashAdapter.compare(password, user.props.password);
         if (!checkPassword) throw new ErrNotFound('user')
 
-        // if(!user.props.active) throw ErrUserNotActive
+        if(!user.props.active) throw new ErrNotActive('user')
 
         const sessionService = new CreateSession(this.securityAdapter)
         const { accessToken, refreshToken, refreshTokenExpiresDate } = await sessionService.execute(email, user.id)

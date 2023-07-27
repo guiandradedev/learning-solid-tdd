@@ -1,10 +1,11 @@
 import { inject, injectable } from "tsyringe";
 import { IActivateCodeRepository, IUsersRepository } from "../../../repositories";
-import { ErrCodeExpired, ErrInvalidParam, ErrNotFound } from "../../../../shared/errors";
+import { ErrInvalidParam, ErrNotFound } from "../../../../shared/errors";
 import { MailAdapter } from "../../../../shared/adapters";
 import { GenerateActivateCode, TypeCode } from "./GenerateActivateCode";
 import { ActivateCode } from "../../../../domain/entities";
 import { SendUserMail } from "../../../../shared/helpers/mail/SendUserMail";
+import { ErrExpired } from "@/shared/errors/ErrExpired";
 
 export interface ActivateUserRequest {
     code: string,
@@ -47,7 +48,7 @@ export class ActivateUserUseCase {
             const sendUserMail = new SendUserMail(this.mailAdapter)
             sendUserMail.authMail({ to: userExists.props.email, code })
 
-            throw ErrCodeExpired
+            throw new ErrExpired('codde')
         }
 
         await this.activateCodeRepository.changeCodeStatus(codeExists.id)

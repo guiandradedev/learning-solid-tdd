@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { AppError, ErrInternalServerError, ErrTokenInvalid, ErrTokenNotProvided, ErrUserNotFound } from "../../../../shared/errors";
+import { AppError, ErrInvalidParam, ErrNotFound, ErrServerError } from "../../../../shared/errors";
 import { container } from "tsyringe";
 import { AuthMiddlewareService } from "./authMiddlewareService";
 
@@ -8,17 +8,17 @@ export class AuthMiddlewareController {
         const authToken =
             req.headers.authorization || req.body.token || req.query.token;
 
-        if (!authToken) return res.status(ErrTokenNotProvided.status).json({ errors: [ErrTokenNotProvided] });
+        if (!authToken) return res.status(new ErrInvalidParam('token').status).json({errors: [new ErrInvalidParam('token')]})
         const [, token] = authToken.split(" ");
 
-        if (!token || token == 'undefined') return res.status(ErrTokenNotProvided.status).json({ errors: [ErrTokenNotProvided] });
+        if (!token || token == 'undefined') return res.status(new ErrInvalidParam('token').status).json({errors: [new ErrInvalidParam('token')]})
 
         try {
             const authMiddlewareService = container.resolve(AuthMiddlewareService)
 
             const user = await authMiddlewareService.execute({token})
 
-            if (!user) return res.status(ErrUserNotFound.status).send({ errors: [ErrUserNotFound] });
+            if (!user) return res.status(new ErrNotFound('user').status).send({ errors: [new ErrNotFound('user')] });
 
             res.locals.user = user;
 
@@ -26,8 +26,8 @@ export class AuthMiddlewareController {
         } catch (error) {
             if (error instanceof Error) {
                 return res
-                    .status(ErrInternalServerError.status)
-                    .json({ errors: [ErrInternalServerError] });
+                    .status(new ErrServerError().status)
+                    .json({ errors: [new ErrServerError()] });
             }
             if (error instanceof AppError) {
                 return res
@@ -35,8 +35,8 @@ export class AuthMiddlewareController {
                     .json({ errors: [error] });
             }
             return res
-                .status(ErrInternalServerError.status)
-                .json({ errors: [ErrInternalServerError] });
+                .status(new ErrServerError().status)
+                .json({ errors: [new ErrServerError()] });
         }
     }
 }
