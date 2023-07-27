@@ -2,10 +2,10 @@ import 'dotenv/config'
 import 'reflect-metadata'
 import { describe, it, expect } from "vitest";
 import { CreateUserUseCase } from "./createUserUseCase";
-import { User } from "../../../../domain/entities/user";
-import { AppError } from '../../../../shared/errors';
-import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from '../../../../tests/adapters';
-import { InMemoryActivateCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository } from '../../../../tests/repositories';
+import { User } from "@/domain/entities/user";
+import { AppError } from '@/shared/errors';
+import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from '@/tests/adapters';
+import { InMemoryActivateCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository } from '@/tests/repositories';
 import { IUsersRepository } from '../../../repositories';
 import { ErrAlreadyExists } from '@/shared/errors';
 

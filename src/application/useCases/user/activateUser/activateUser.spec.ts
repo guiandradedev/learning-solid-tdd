@@ -2,13 +2,14 @@ import 'reflect-metadata'
 
 import { describe, expect, it, vitest } from "vitest";
 import { CreateUserResponse, CreateUserUseCase } from "../createUser/createUserUseCase";
-import { IUsersRepository } from "../../../../application/repositories";
-import { InMemoryActivateCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository } from "../../../../tests/repositories";
-import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from "../../../../tests/adapters";
-import { ActivateCode, User } from '../../../../domain/entities';
+import { IUsersRepository } from "@/application/repositories";
+import { InMemoryActivateCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository } from "@/tests/repositories";
+import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from "@/tests/adapters";
+import { ActivateCode, User } from '@/domain/entities';
 import { ActivateUserUseCase } from './activateUserUseCase';
-import { AppError, ErrCodeExpired, ErrCodeInvalid, ErrInvalidParam, ErrNotFound, ErrUserNotFound } from '../../../../shared/errors';
+import { ErrInvalidParam, ErrNotFound } from '@/shared/errors';
 import { GenerateActivateCode } from './GenerateActivateCode';
+import { ErrExpired } from '@/shared/errors/ErrExpired';
 
 describe("ActivateUserCode", () => {
     const makeSut = async (): Promise<{ sut: ActivateUserUseCase, usersRepository: IUsersRepository, user: CreateUserResponse }> => {
@@ -90,7 +91,7 @@ describe("ActivateUserCode", () => {
             code: user.code.code
         })
 
-        expect(code).rejects.toEqual(ErrCodeExpired)
+        expect(code).rejects.toBeInstanceOf(ErrExpired)
 
     })
 

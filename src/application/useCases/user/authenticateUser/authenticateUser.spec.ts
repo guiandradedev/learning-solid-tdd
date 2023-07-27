@@ -2,13 +2,13 @@ import 'reflect-metadata'
 import 'dotenv/config'
 
 import { describe, expect, it } from "vitest";
-import { AppError, ErrNotFound } from '../../../../shared/errors';
-import { InMemoryActivateCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository } from "../../../../tests/repositories";
+import { ErrNotActive, ErrNotFound } from '@/shared/errors';
+import { InMemoryActivateCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository } from "@/tests/repositories";
 import { AuthenticateUserUseCase, UserTokenResponse } from "./authenticateUserUseCase";
 import { CreateUserUseCase } from "../createUser/createUserUseCase";
-import { User, UserToken } from '../../../../domain/entities';
-import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from '../../../../tests/adapters';
-import { SecurityDecryptResponse } from '../../../../shared/adapters';
+import { User } from '@/domain/entities';
+import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from '@/tests/adapters';
+import { SecurityDecryptResponse } from '@/shared/adapters';
 
 describe('Authentication', async () => {
     it('', () => { })
@@ -31,7 +31,8 @@ describe('Authentication', async () => {
         await sutUser.execute({
             email: "flaamer@gmail.com",
             name: "flaamer",
-            password: "teste123"
+            password: "teste123",
+            active: true
         })
 
         const user = await sut.execute({
@@ -40,6 +41,23 @@ describe('Authentication', async () => {
         })
 
         expect(user).toBeInstanceOf(User)
+    })
+
+    it('should throw an error if user is not active', async () => {
+        const { sutUser, sut } = makeSup();
+
+        await sutUser.execute({
+            email: "flaamer@gmail.com",
+            name: "flaamer",
+            password: "teste123"
+        })
+
+        const user = sut.execute({
+            email: "flaamer@gmail.com",
+            password: "teste123"
+        })
+
+        expect(user).rejects.toBeInstanceOf(ErrNotActive)
     })
 
     it('Should throw an error if user does not exists', async () => {
@@ -60,7 +78,8 @@ describe('Authentication', async () => {
         await sutUser.execute({
             email: "flaamer@gmail.com",
             name: "flaamer",
-            password: "teste123"
+            password: "teste123",
+            active: true
         })
 
         const dataObj = {
@@ -78,7 +97,8 @@ describe('Authentication', async () => {
         await sutUser.execute({
             email: "flaamer@gmail.com",
             name: "flaamer",
-            password: "teste123"
+            password: "teste123",
+            active: true
         })
 
         const user = await sut.execute({
@@ -98,7 +118,8 @@ describe('Authentication', async () => {
         await sutUser.execute({
             email: "flaamer@gmail.com",
             name: "flaamer",
-            password: "teste123"
+            password: "teste123",
+            active: true
         })
 
         const user = await sut.execute({
@@ -126,5 +147,4 @@ describe('Authentication', async () => {
         expect(verifyAccess.expiresIn).toBeLessThanOrEqual(Date.now() + Number(process.env.EXPIRES_IN_TOKEN));
     })
 
-    // it('should throw an error if ')
 })
