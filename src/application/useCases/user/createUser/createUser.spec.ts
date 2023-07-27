@@ -9,23 +9,31 @@ import { InMemoryUserCodeRepository, InMemoryUserTokenRepository, InMemoryUsersR
 import { IUsersRepository } from '../../../repositories';
 import { ErrAlreadyExists } from '@/shared/errors';
 
+export const createUserFactory = () => {
+    const usersRepository = new InMemoryUsersRepository()
+    const userTokenRepository = new InMemoryUserTokenRepository()
+    const userCodeRepository = new InMemoryUserCodeRepository()
+    const hashAdapter = new InMemoryHashAdapter();
+    const securityAdapter = new InMemorySecurityAdapter()
+    const mailAdapter = new InMemoryMailAdapter()
+    const sut = new CreateUserUseCase(usersRepository, userTokenRepository, userCodeRepository, hashAdapter, securityAdapter, mailAdapter)
+
+    return {
+        usersRepository,
+        userTokenRepository,
+        userCodeRepository,
+        hashAdapter,
+        securityAdapter,
+        mailAdapter,
+        sut
+    }
+}
+
 
 describe('create an user', () => {
 
-    const makeSut = (): { sut: CreateUserUseCase, usersRepository: IUsersRepository } => {
-        const usersRepository = new InMemoryUsersRepository()
-        const userTokenRepository = new InMemoryUserTokenRepository()
-        const userCodeRepository = new InMemoryUserCodeRepository()
-        const hashAdapter = new InMemoryHashAdapter();
-        const securityAdapter = new InMemorySecurityAdapter()
-        const mailAdapter = new InMemoryMailAdapter()
-        const sut = new CreateUserUseCase(usersRepository, userTokenRepository, userCodeRepository, hashAdapter, securityAdapter, mailAdapter)
-
-        return { sut, usersRepository }
-    }
-
     it('should create an user', async () => {
-        const { sut } = makeSut()
+        const { sut } = createUserFactory()
 
         const user1 = await sut.execute({
             email: "flaamer@gmail.com",
@@ -37,7 +45,7 @@ describe('create an user', () => {
     })
 
     it('should not create another user (throw an error)', async () => {
-        const { sut } = makeSut()
+        const { sut } = createUserFactory()
 
         await sut.execute({
             email: "flaamer@gmail.com",
