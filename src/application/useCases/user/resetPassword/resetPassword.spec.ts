@@ -2,7 +2,7 @@ import 'reflect-metadata'
 import { User, UserCode } from "@/domain/entities";
 import { describe, expect, it, vitest } from "vitest";
 import { ResetPasswordUseCase } from "./resetPasswordUseCase";
-import { ErrInvalidParam, ErrNotFound } from "@/shared/errors";
+import { ErrInvalidParam } from "@/shared/errors";
 import { InMemoryUserCodeRepository } from '@/tests/repositories';
 
 describe('Reset Password', ()=>{
@@ -38,7 +38,7 @@ describe('Reset Password', ()=>{
             confirmPassword: "password"
         })
 
-        expect(reset).rejects.toBeInstanceOf(ErrNotFound)
+        expect(reset).rejects.toBeInstanceOf(ErrInvalidParam)
     })
     it('should throw an error if code expired', async () => {})
     it('should throw an error if password and confirm password does not match', async () => {})

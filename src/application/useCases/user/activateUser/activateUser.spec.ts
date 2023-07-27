@@ -1,7 +1,7 @@
 import 'reflect-metadata'
 
 import { describe, expect, it, vitest } from "vitest";
-import { CreateUserResponse, CreateUserUseCase } from "../createUser/createUserUseCase";
+import { CreateUserUseCase } from "../createUser/createUserUseCase";
 import { IUsersRepository } from "@/application/repositories";
 import { InMemoryUserCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository } from "@/tests/repositories";
 import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from "@/tests/adapters";
@@ -10,9 +10,10 @@ import { ActivateUserUseCase } from './activateUserUseCase';
 import { ErrInvalidParam, ErrNotFound } from '@/shared/errors';
 import { GenerateUserCode } from '../../../services/GenerateUserCode';
 import { ErrExpired } from '@/shared/errors/ErrExpired';
+import { UserAuthenticateResponse } from '../authenticateUser/authenticateUserUseCase';
 
 describe("ActivateUserCode", () => {
-    const makeSut = async (): Promise<{ sut: ActivateUserUseCase, usersRepository: IUsersRepository, user: CreateUserResponse }> => {
+    const makeSut = async (): Promise<{ sut: ActivateUserUseCase, usersRepository: IUsersRepository, user: UserAuthenticateResponse, code: UserCode }> => {
         const usersRepository = new InMemoryUsersRepository()
         const userTokenRepository = new InMemoryUserTokenRepository()
         const userCodeRepository = new InMemoryUserCodeRepository()
@@ -27,41 +28,46 @@ describe("ActivateUserCode", () => {
             password: "teste123"
         })
 
+        const code = await userCodeRepository.findByUserId({userId: user.id, type: 'ACTIVATE_ACCOUNT'})
+
         const sut = new ActivateUserUseCase(usersRepository, userCodeRepository, mailAdapter)
 
-        return { sut, usersRepository, user }
+        return { sut, usersRepository, user, code }
     }
     it('should activate an user if code is valid', async () => {
-        const { sut, user } = await makeSut();
+        const { sut, user, code, usersRepository } = await makeSut();
 
-        const code = await sut.execute({
+        const activateUser = await sut.execute({
             userId: user.id,
-            code: user.code.code
+            code: code.props.code
         })
 
-        expect(code).toBeInstanceOf(UserCode)
+        expect(activateUser).toBeInstanceOf(UserCode)
+        
+        const validateUser = await usersRepository.findById(activateUser.props.userId)
+        expect(validateUser.props.active).toBe(true)
     })
 
     it('should throw an error if user does not exists', async () => {
-        const { sut, user } = await makeSut();
+        const { sut, code } = await makeSut();
 
-        const code = sut.execute({
+        const activateCode = sut.execute({
             userId: 'fake_user_id',
-            code: user.code.code
+            code: code.props.code
         })
 
-        expect(code).rejects.toBeInstanceOf(ErrNotFound)
+        expect(activateCode).rejects.toBeInstanceOf(ErrNotFound)
     })
 
     it('should throw an error if user code not exists', async () => {
-        const { sut, user } = await makeSut();
+        const { sut, user, code } = await makeSut();
 
-        const code = sut.execute({
+        const activateCode = sut.execute({
             userId: user.id,
             code: "fake_code"
         })
 
-        expect(code).rejects.toBeInstanceOf(ErrInvalidParam)
+        expect(activateCode).rejects.toBeInstanceOf(ErrInvalidParam)
     })
 
     it('should throw an error if code expired', async () => {
@@ -83,15 +89,16 @@ describe("ActivateUserCode", () => {
             email: "teste@teste.com",
             password: "teste123"
         })
+        const code = await userCodeRepository.findByUserId({userId: user.id, type: 'ACTIVATE_ACCOUNT'})
 
         const sut = new ActivateUserUseCase(usersRepository, userCodeRepository, mailAdapter)
 
-        const code = sut.execute({
+        const activateCode = sut.execute({
             userId: user.id,
-            code: user.code.code
+            code: code.props.code
         })
 
-        expect(code).rejects.toBeInstanceOf(ErrExpired)
+        expect(activateCode).rejects.toBeInstanceOf(ErrExpired)
 
     })
 

@@ -58,10 +58,10 @@ describe('Forgot Password', () => {
 
     it('should throw an error if user is not active', async () => {
         const { userAdapter, sut } = await makeSut()
-        const user = await userAdapter.execute({
+        await userAdapter.execute({
             email: "not_active_mail@gmail.com",
-            name: "Guilherme",
-            password: "teste123"
+            name: "invalid_name",
+            password: "invalid_password"
         })
 
         const code = sut.execute({

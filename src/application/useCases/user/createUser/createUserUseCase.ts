@@ -15,13 +15,6 @@ type CreateUserRequest = {
     active?: boolean
 }
 
-export interface CreateUserResponse extends UserAuthenticateResponse {
-    code?: {
-        code: string,
-        expiresIn: Date
-    }
-}
-
 @injectable()
 export class CreateUserUseCase {
     constructor(
@@ -44,7 +37,7 @@ export class CreateUserUseCase {
         private mailAdapter: MailAdapter
     ) { }
 
-    async execute({ name, email, password, active }: CreateUserRequest): Promise<CreateUserResponse> {
+    async execute({ name, email, password, active }: CreateUserRequest): Promise<UserAuthenticateResponse> {
         const userAlreadyExists = await this.usersRepository.findByEmail(email)
         if (userAlreadyExists) throw new ErrAlreadyExists('user')
 
@@ -66,7 +59,7 @@ export class CreateUserUseCase {
         })
         await this.userTokenRepository.create(userToken)
 
-        const userReturn = Object.assign(user, {
+        const userReturn: UserAuthenticateResponse = Object.assign(user, {
             token: {
                 accessToken,
                 refreshToken
@@ -89,11 +82,6 @@ export class CreateUserUseCase {
     
             const sendUserMail = new SendUserMail(this.mailAdapter)
             await sendUserMail.authMail({to: email, code})
-
-            Object.assign(userReturn, {code: {
-                code,
-                expiresIn
-            }})
         }
 
         return userReturn;

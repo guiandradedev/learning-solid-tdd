@@ -3,16 +3,22 @@ import { TypesUserCode, UserCode } from "@/domain/entities/user-code";
 export type FindByCodeAndUserId = {
     code: string,
     userId: string,
-    type: TypesUserCode
+    type?: TypesUserCode
 }
 
 export type FindByCode = {
     code: string,
-    type: TypesUserCode
+    type?: TypesUserCode
+}
+
+export type FindCodeByUserId = {
+    userId: string,
+    type?: TypesUserCode
 }
 export interface IUserCodeRepository {
     create(code: UserCode): Promise<void>
-    findByCodeAndUserId(data: FindByCodeAndUserId): Promise<UserCode | null>
-    findByCode(data: FindByCode): Promise<UserCode | null>
+    findByCodeAndUserId(data: FindByCodeAndUserId): Promise<UserCode>
+    findByCode(data: FindByCode): Promise<UserCode>
+    findByUserId(data: FindCodeByUserId): Promise<UserCode>
     changeCodeStatus(id: string): Promise<boolean>
 }

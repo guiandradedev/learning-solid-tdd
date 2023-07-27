@@ -29,19 +29,20 @@ export class ActivateUserUseCase {
         const userExists = await this.userRepository.findById(userId)
         if(!userExists) throw new ErrNotFound('user')
 
-        const codeExists = await this.userCodeRepository.findByCodeAndUserId({ code, userId })
+        const codeExists = await this.userCodeRepository.findByCodeAndUserId({ code, userId, type: 'ACTIVATE_ACCOUNT' })
         if (!codeExists) throw new ErrInvalidParam('code')
 
         if (codeExists.props.expiresIn < new Date() || codeExists.props.active == false) {
-            const generateActivateCode = new GenerateUserCode()
-            const { code, expiresIn } = generateActivateCode.execute({ type: TypeCode.string, size: 6 })
+            const generateUserCode = new GenerateUserCode()
+            const { code, expiresIn } = generateUserCode.execute({ type: TypeCode.string, size: 6 })
 
             const activateCode = UserCode.create({
                 active: true,
                 code,
                 expiresIn,
                 createdAt: new Date(),
-                userId: userId
+                userId: userId,
+                type: "ACTIVATE_ACCOUNT"
             })
             await this.userCodeRepository.create(activateCode)
 
@@ -52,6 +53,7 @@ export class ActivateUserUseCase {
         }
 
         await this.userCodeRepository.changeCodeStatus(codeExists.id)
+        await this.userRepository.changeStatus(userExists.id)
 
         return codeExists
 

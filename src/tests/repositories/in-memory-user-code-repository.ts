@@ -1,4 +1,4 @@
-import { FindByCode, FindByCodeAndUserId, IUserCodeRepository } from "../../application/repositories";
+import { FindByCode, FindByCodeAndUserId, FindCodeByUserId, IUserCodeRepository } from "../../application/repositories";
 import { UserCode } from "../../domain/entities";
 
 export class InMemoryUserCodeRepository implements IUserCodeRepository {
@@ -23,6 +23,17 @@ export class InMemoryUserCodeRepository implements IUserCodeRepository {
         const data = this.codes.find((c)=>{
             const isTypeMatch = type ? c.props.type === type : true;
             return c.props.code == code && isTypeMatch
+        })
+
+        if(!data) return null;
+
+        return data;
+    }
+
+    async findByUserId({userId, type}: FindCodeByUserId): Promise<UserCode> {
+        const data = this.codes.find((c)=>{
+            const isTypeMatch = type ? c.props.type === type : true;
+            return c.props.userId == userId && isTypeMatch
         })
 
         if(!data) return null;

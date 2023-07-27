@@ -1,6 +1,6 @@
 import { IUserCodeRepository } from "@/application/repositories";
 import { User } from "@/domain/entities";
-import { ErrNotFound } from "@/shared/errors";
+import { ErrInvalidParam } from "@/shared/errors";
 import { inject, injectable } from "tsyringe";
 
 type ResetPasswordRequest = {
@@ -18,7 +18,7 @@ export class ResetPasswordUseCase {
 
     async execute({code}: ResetPasswordRequest): Promise<User> {
         const codeExists = await this.userCodeRepository.findByCode({code, type: 'FORGOT_PASSWORD'})
-        if(!codeExists) throw new ErrNotFound('code')
+        if(!codeExists) throw new ErrInvalidParam('code')
 
         return User.create({
             name: "",

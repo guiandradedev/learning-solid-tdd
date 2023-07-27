@@ -27,12 +27,12 @@ export class ForgotPasswordUseCase {
         const userExists = await this.usersRepository.findByEmail(email)
         if (!userExists) throw new ErrNotFound('user')
 
+        const generateUserCode = new GenerateUserCode()
+        
         if (!userExists.props.active) {
-            //realizar operações para reenviar email para ativação da conta
             throw new ErrNotActive('user')
         }
 
-        const generateUserCode = new GenerateUserCode()
         const { code, expiresIn } = generateUserCode.execute({ type: TypeCode.string, size: 6 })
 
         const userCode = UserCode.create({
