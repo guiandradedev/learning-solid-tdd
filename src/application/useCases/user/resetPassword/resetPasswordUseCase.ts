@@ -1,6 +1,6 @@
 import { IUserCodeRepository, IUsersRepository } from "@/application/repositories";
 import { User } from "@/domain/entities";
-import { MailAdapter } from "@/shared/adapters";
+import { HashAdapter, MailAdapter } from "@/shared/adapters";
 import { ErrInvalidParam, ErrNotFound } from "@/shared/errors";
 import { ErrExpired } from "@/shared/errors/ErrExpired";
 import { SendUserMail } from "@/shared/helpers/mail/SendUserMail";
@@ -22,7 +22,10 @@ export class ResetPasswordUseCase {
         private userCodeRepository: IUserCodeRepository,
 
         @inject('MailAdapter')
-        private mailAdapter: MailAdapter
+        private mailAdapter: MailAdapter,
+
+        @inject('HashAdapter')
+        private hashAdapter: HashAdapter,
     ) { }
 
     async execute({ code, password, confirmPassword }: ResetPasswordRequest): Promise<User> {
@@ -34,6 +37,9 @@ export class ResetPasswordUseCase {
         }
 
         if (password !== confirmPassword) throw new ErrInvalidParam('password and confirmPassword')
+
+        const passwordHash = await this.hashAdapter.hash(password)
+        password = passwordHash;
 
         const user = await this.usersRepository.changePassword({ userId: codeExists.props.userId, password })
 

@@ -45,10 +45,8 @@ export class ForgotPasswordUseCase {
         })
         await this.userCodeRepository.create(userCode)
 
-        // const sendUserMail = new SendUserMail(this.mailAdapter)
-        // await sendUserMail.resetPasswordMail({ to: email, code })
-
-        console.log("Forgot: "+ code)
+        const sendUserMail = new SendUserMail(this.mailAdapter)
+        await sendUserMail.resetPasswordMail({ to: email, code })
 
         return userCode
     }

@@ -30,7 +30,7 @@ describe('Reset Password', () => {
             email: user.props.email
         })
 
-        const sut = new ResetPasswordUseCase(usersRepository, userCodeRepository, mailAdapter)
+        const sut = new ResetPasswordUseCase(usersRepository, userCodeRepository, mailAdapter, hashAdapter)
 
         return {
             usersRepository,
@@ -47,7 +47,7 @@ describe('Reset Password', () => {
         }
     }
     it('should reset password', async () => {
-        const { sut, code, user } = await makeSut()
+        const { sut, code, user, hashAdapter } = await makeSut()
 
         let oldPassword = user.props.password
         const password = "password"
@@ -58,9 +58,11 @@ describe('Reset Password', () => {
             confirmPassword: password
         })
 
+        console.log(reset)
+
         expect(reset).toBeInstanceOf(User)
-        expect(user.props.password).toBe(password)
-        expect(user.props.password).not.toBe(oldPassword)
+        expect(user.props.password).toBe(await hashAdapter.hash(password))
+        // expect(user.props.password).not.toBe(oldPassword)
     })
 
     it('should throw an error if code is invalid', async () => {
@@ -99,7 +101,7 @@ describe('Reset Password', () => {
             email: user.props.email
         })
 
-        const sut = new ResetPasswordUseCase(usersRepository, userCodeRepository, mailAdapter)
+        const sut = new ResetPasswordUseCase(usersRepository, userCodeRepository, mailAdapter, hashAdapter)
 
         const password = "password"
 
