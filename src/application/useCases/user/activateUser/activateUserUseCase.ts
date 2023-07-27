@@ -1,9 +1,9 @@
 import { inject, injectable } from "tsyringe";
-import { IActivateCodeRepository, IUsersRepository } from "../../../repositories";
+import { IUserCodeRepository, IUsersRepository } from "../../../repositories";
 import { ErrInvalidParam, ErrNotFound } from "../../../../shared/errors";
 import { MailAdapter } from "../../../../shared/adapters";
-import { GenerateActivateCode, TypeCode } from "./GenerateActivateCode";
-import { ActivateCode } from "../../../../domain/entities";
+import { GenerateUserCode, TypeCode } from "../../../services/GenerateUserCode";
+import { UserCode } from "../../../../domain/entities";
 import { SendUserMail } from "../../../../shared/helpers/mail/SendUserMail";
 import { ErrExpired } from "@/shared/errors/ErrExpired";
 
@@ -18,8 +18,8 @@ export class ActivateUserUseCase {
         @inject('UsersRepository')
         private userRepository: IUsersRepository,
 
-        @inject('ActivateCodeRepository')
-        private activateCodeRepository: IActivateCodeRepository,
+        @inject('userCodeRepository')
+        private userCodeRepository: IUserCodeRepository,
 
         @inject('MailAdapter')
         private mailAdapter: MailAdapter
@@ -29,29 +29,29 @@ export class ActivateUserUseCase {
         const userExists = await this.userRepository.findById(userId)
         if(!userExists) throw new ErrNotFound('user')
 
-        const codeExists = await this.activateCodeRepository.findByCodeAndUserId({ code, userId })
+        const codeExists = await this.userCodeRepository.findByCodeAndUserId({ code, userId })
         if (!codeExists) throw new ErrInvalidParam('code')
 
         if (codeExists.props.expiresIn < new Date() || codeExists.props.active == false) {
-            const generateActivateCode = new GenerateActivateCode()
+            const generateActivateCode = new GenerateUserCode()
             const { code, expiresIn } = generateActivateCode.execute({ type: TypeCode.string, size: 6 })
 
-            const activateCode = ActivateCode.create({
+            const activateCode = UserCode.create({
                 active: true,
                 code,
                 expiresIn,
                 createdAt: new Date(),
                 userId: userId
             })
-            await this.activateCodeRepository.create(activateCode)
+            await this.userCodeRepository.create(activateCode)
 
             const sendUserMail = new SendUserMail(this.mailAdapter)
             sendUserMail.authMail({ to: userExists.props.email, code })
 
-            throw new ErrExpired('codde')
+            throw new ErrExpired('code')
         }
 
-        await this.activateCodeRepository.changeCodeStatus(codeExists.id)
+        await this.userCodeRepository.changeCodeStatus(codeExists.id)
 
         return codeExists
 

@@ -1,8 +1,8 @@
 import { inject, injectable } from "tsyringe";
 import { IUserTokenRepository, IUsersRepository } from "../../../repositories";
-import { CreateSession } from "../../../services/SessionService";
+import { CreateSession } from "../../../services/Session/SessionService";
 import { User, UserToken } from "../../../../domain/entities";
-import { AppError, ErrNotFound, ErrNotActive } from "../../../../shared/errors";
+import { ErrNotFound, ErrNotActive } from "../../../../shared/errors";
 import { HashAdapter, SecurityAdapter } from "../../../../shared/adapters";
 
 type AuthenticateUserRequest = {

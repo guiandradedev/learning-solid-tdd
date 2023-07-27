@@ -9,7 +9,7 @@ type GenerateActivateCodeRequest = {
     expiresIn?: Date
 }
 
-export class GenerateActivateCode {
+export class GenerateUserCode {
     execute({ type, size, expiresIn }: GenerateActivateCodeRequest): {code: string, expiresIn: Date} {
         let code = ""
         switch (type) {

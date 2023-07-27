@@ -1,6 +1,7 @@
 import { User } from "@/domain/entities";
 import { describe, expect, it } from "vitest";
 import { ResetPasswordUseCase } from "./resetPasswordUseCase";
+import { ErrInvalidParam } from "@/shared/errors";
 
 describe('Reset Password', ()=>{
     it('should reset password', async () => {
@@ -15,7 +16,17 @@ describe('Reset Password', ()=>{
         expect(reset).toBeInstanceOf(User)
     })
 
-    it('should throw an error if user does not exists', () => {})
-    it('should throw an error if code is invalid', () => {})
-    it('should throw an error if code expired', () => {})
+    it('should throw an error if code is invalid', async () => {
+        // const sut = new ResetPasswordUseCase()
+
+        // const reset = sut.execute({
+        //     code: "invalid_code",
+        //     password: "password",
+        //     confirmPassword: "password"
+        // })
+
+        // expect(reset).rejects.toBeInstanceOf(ErrInvalidParam)
+    })
+    it('should throw an error if code expired', async () => {})
+    it('should throw an error if password and confirm password does not match', async () => {})
 })

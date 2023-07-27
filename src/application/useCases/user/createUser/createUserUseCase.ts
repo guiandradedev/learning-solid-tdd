@@ -1,11 +1,11 @@
 import { inject, injectable } from "tsyringe";
-import { ActivateCode, User, UserToken } from "../../../../domain/entities";
-import { IActivateCodeRepository, IUsersRepository, IUserTokenRepository } from "../../../repositories";
-import { CreateSession } from "../../../services/SessionService";
+import { UserCode, User, UserToken } from "../../../../domain/entities";
+import { IUserCodeRepository, IUsersRepository, IUserTokenRepository } from "../../../repositories";
+import { CreateSession } from "../../../services/Session/SessionService";
 import { UserAuthenticateResponse } from "../authenticateUser/authenticateUserUseCase";
 import { ErrAlreadyExists } from "@/shared/errors";
 import { HashAdapter, SecurityAdapter, MailAdapter } from "../../../../shared/adapters";
-import { GenerateActivateCode, TypeCode } from '../activateUser/GenerateActivateCode'
+import { GenerateUserCode, TypeCode } from '../../../services/GenerateUserCode'
 import { SendUserMail } from "../../../../shared/helpers/mail/SendUserMail";
 
 type CreateUserRequest = {
@@ -31,8 +31,8 @@ export class CreateUserUseCase {
         @inject('UserTokenRepository')
         private userTokenRepository: IUserTokenRepository,
 
-        @inject('ActivateCodeRepository')
-        private activateCodeRepository: IActivateCodeRepository,
+        @inject('UserCodeRepository')
+        private UserCodeRepository: IUserCodeRepository,
 
         @inject('HashAdapter')
         private hashAdapter: HashAdapter,
@@ -74,17 +74,17 @@ export class CreateUserUseCase {
         })
 
         if(!active) {
-            const generateActivateCode = new GenerateActivateCode()
-            const {code, expiresIn} = generateActivateCode.execute({ type: TypeCode.string, size: 6 })
+            const generateUserCode = new GenerateUserCode()
+            const {code, expiresIn} = generateUserCode.execute({ type: TypeCode.string, size: 6 })
     
-            const activateCode = ActivateCode.create({
+            const userCode = UserCode.create({
                 active: true,
                 code,
                 expiresIn,
                 createdAt: new Date(),
                 userId: user.id
             })
-            await this.activateCodeRepository.create(activateCode)
+            await this.UserCodeRepository.create(userCode)
     
             const sendUserMail = new SendUserMail(this.mailAdapter)
             await sendUserMail.authMail({to: email, code})

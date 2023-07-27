@@ -5,10 +5,10 @@ import { CreateUserResponse, CreateUserUseCase } from "../createUser/createUserU
 import { IUsersRepository } from "@/application/repositories";
 import { InMemoryActivateCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository } from "@/tests/repositories";
 import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from "@/tests/adapters";
-import { ActivateCode, User } from '@/domain/entities';
+import { UserCode, User } from '@/domain/entities';
 import { ActivateUserUseCase } from './activateUserUseCase';
 import { ErrInvalidParam, ErrNotFound } from '@/shared/errors';
-import { GenerateActivateCode } from './GenerateActivateCode';
+import { GenerateUserCode } from '../../../services/GenerateUserCode';
 import { ErrExpired } from '@/shared/errors/ErrExpired';
 
 describe("ActivateUserCode", () => {
@@ -39,7 +39,7 @@ describe("ActivateUserCode", () => {
             code: user.code.code
         })
 
-        expect(code).toBeInstanceOf(ActivateCode)
+        expect(code).toBeInstanceOf(UserCode)
     })
 
     it('should throw an error if user does not exists', async () => {
@@ -73,7 +73,7 @@ describe("ActivateUserCode", () => {
         const mailAdapter = new InMemoryMailAdapter()
         const sutUser = new CreateUserUseCase(usersRepository, userTokenRepository, activateCodeRepository, hashAdapter, securityAdapter, mailAdapter)
 
-        const generateActivateCode = vitest.spyOn(GenerateActivateCode.prototype, 'execute')
+        const generateActivateCode = vitest.spyOn(GenerateUserCode.prototype, 'execute')
         const date = new Date()
         date.setDate(date.getDate() - 1)
         generateActivateCode.mockImplementation(() => { return { code: '', expiresIn: date } });
