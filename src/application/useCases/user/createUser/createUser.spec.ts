@@ -7,6 +7,7 @@ import { AppError } from '../../../../shared/errors';
 import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from '../../../../tests/adapters';
 import { InMemoryActivateCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository } from '../../../../tests/repositories';
 import { IUsersRepository } from '../../../repositories';
+import { ErrAlreadyExists } from '@/shared/errors';
 
 
 describe('create an user', () => {
@@ -51,10 +52,6 @@ describe('create an user', () => {
         }
 
         expect(async () => await sut.execute(dataUser)).rejects.toBeInstanceOf(AppError)
-        expect(async () => await sut.execute(dataUser)).rejects.toThrow(
-            expect.objectContaining({
-                title: "ERR_USER_ALREADY_EXISTS"
-            })
-        );
+        expect(async () => await sut.execute(dataUser)).rejects.toBeInstanceOf(ErrAlreadyExists)
     })
 })

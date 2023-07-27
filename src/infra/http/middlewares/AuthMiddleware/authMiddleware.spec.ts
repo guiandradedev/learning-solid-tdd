@@ -10,7 +10,7 @@ import { SecurityAdapter } from '../../../../shared/adapters';
 import { IUsersRepository } from 'application/repositories';
 import { UserAuthenticatetedResponse } from 'application/useCases/user/authenticateUser/authenticateUserUseCase';
 import { v4 as uuidv4 } from 'uuid';
-import { ErrTokenInvalid, ErrUserNotFound } from '../../../../shared/errors';
+import { ErrInvalidParam, ErrNotFound } from '../../../../shared/errors';
 
 describe("AuthMiddlewareService", () => {
     type TypeSut = {
@@ -56,14 +56,14 @@ describe("AuthMiddlewareService", () => {
         vitest.spyOn(usersRepository, 'findById').mockReturnValue(null)
         const userData = sut.execute({ token: user.token.accessToken })
 
-        expect(userData).rejects.toEqual(ErrUserNotFound)
+        expect(userData).rejects.toBeInstanceOf(ErrNotFound)
      })
 
     it('should throw an error if token is not valid', async () => { 
         const { sut } = await makeSut()
         const userData = sut.execute({ token: uuidv4() })
 
-        expect(userData).rejects.toEqual(ErrTokenInvalid)
+        expect(userData).rejects.toBeInstanceOf(ErrInvalidParam)
         
     })
 

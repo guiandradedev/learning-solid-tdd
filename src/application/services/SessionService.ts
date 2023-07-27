@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import { ITokens } from "../../@types/token.types";
 import { AppError } from '../../shared/errors/AppError';
 import { SecurityAdapter } from '../../shared/adapters';
+import { ErrServerError } from '@/shared/errors';
 
 class CreateSession {
     constructor(
@@ -31,7 +32,7 @@ class CreateSession {
 
         } catch (error) {
             console.log(error)
-            throw new AppError({ title: "ERR_CREATE_TOKEN", message: "Error while creating user token", status: 500 })
+            throw new ErrServerError()
         }
     }
 }

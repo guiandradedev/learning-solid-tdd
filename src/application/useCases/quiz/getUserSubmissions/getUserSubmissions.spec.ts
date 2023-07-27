@@ -7,8 +7,8 @@ import { CreateSubmissionUseCase } from "../../quiz/createSubmission/createSubmi
 import { CreateUserUseCase } from "../../user/createUser/createUserUseCase";
 import { CreateQuizUseCase } from "../../quiz/createQuiz/createQuizUseCase";
 import { GetUserSubmissionsUseCase } from "./getUserSubmissionsUseCase";
-import { User, Submission, SubmissionProps } from "../../../../domain/entities";
-import { AppError } from '../../../../shared/errors';
+import { User, Submission } from "../../../../domain/entities";
+import { ErrNotFound } from '../../../../shared/errors';
 import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from '../../../../tests/adapters';
 
 /*
@@ -108,12 +108,7 @@ describe("Get user submissions", () => {
         }
 
         expect(async () => await sut.execute(dataObj)).not.toBeInstanceOf(Submission)
-        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(AppError)
-        expect(async () => await sut.execute(dataObj)).rejects.toThrow(
-            expect.objectContaining({
-                title: "ERR_USER_NOT_FOUND"
-            })
-        );
+        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(ErrNotFound)
     })
 
     it('should throw an error (user does not submit and test)', async () => {
@@ -124,11 +119,6 @@ describe("Get user submissions", () => {
         }
 
         expect(async () => await sut.execute(dataObj)).not.toBeInstanceOf(Submission)
-        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(AppError)
-        expect(async () => await sut.execute(dataObj)).rejects.toThrow(
-            expect.objectContaining({
-                title: "ERR_SUBMISSION_NOT_FOUND"
-            })
-        );
+        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(ErrNotFound)
     })
 })

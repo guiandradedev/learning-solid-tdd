@@ -7,7 +7,7 @@ import { InMemoryActivateCodeRepository, InMemoryUserTokenRepository, InMemoryUs
 import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from "../../../../tests/adapters";
 import { ActivateCode, User } from '../../../../domain/entities';
 import { ActivateUserUseCase } from './activateUserUseCase';
-import { AppError, ErrCodeExpired, ErrCodeInvalid, ErrUserNotFound } from '../../../../shared/errors';
+import { AppError, ErrCodeExpired, ErrCodeInvalid, ErrInvalidParam, ErrNotFound, ErrUserNotFound } from '../../../../shared/errors';
 import { GenerateActivateCode } from './GenerateActivateCode';
 
 describe("ActivateUserCode", () => {
@@ -49,7 +49,7 @@ describe("ActivateUserCode", () => {
             code: user.code.code
         })
 
-        expect(code).rejects.toEqual(ErrUserNotFound)
+        expect(code).rejects.toBeInstanceOf(ErrNotFound)
     })
 
     it('should throw an error if user code not exists', async () => {
@@ -60,7 +60,7 @@ describe("ActivateUserCode", () => {
             code: "fake_code"
         })
 
-        expect(code).rejects.toEqual(ErrCodeInvalid)
+        expect(code).rejects.toBeInstanceOf(ErrInvalidParam)
     })
 
     it('should throw an error if code expired', async () => {

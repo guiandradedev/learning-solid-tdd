@@ -3,7 +3,6 @@ import { describe, expect, it, vitest } from "vitest";
 import { CreateSession } from "./SessionService";
 import { SecurityAdapter, SecurityDecryptResponse } from '../../shared/adapters';
 import { InMemorySecurityAdapter } from '../../tests/adapters/InMemorySecurityAdapter';
-import { AppError } from '@shared/errors';
 
 describe("Session Service", async () => {
     type TypeSut = {

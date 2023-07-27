@@ -3,7 +3,7 @@ import { ActivateCode, User, UserToken } from "../../../../domain/entities";
 import { IActivateCodeRepository, IUsersRepository, IUserTokenRepository } from "../../../repositories";
 import { CreateSession } from "../../../services/SessionService";
 import { UserAuthenticatetedResponse } from "../authenticateUser/authenticateUserUseCase";
-import { AppError } from "../../../../shared/errors";
+import { ErrAlreadyExists } from "@/shared/errors";
 import { HashAdapter, SecurityAdapter, MailAdapter } from "../../../../shared/adapters";
 import { GenerateActivateCode, TypeCode } from '../activateUser/GenerateActivateCode'
 import { SendUserMail } from "../../../../shared/helpers/mail/SendUserMail";
@@ -46,7 +46,7 @@ export class CreateUserUseCase {
 
     async execute({ name, email, password, active }: CreateUserRequest): Promise<CreateUserResponse> {
         const userAlreadyExists = await this.usersRepository.findByEmail(email)
-        if (userAlreadyExists) throw new AppError({ title: "ERR_USER_ALREADY_EXISTS", message: "User already exists", status: 500 })
+        if (userAlreadyExists) throw new ErrAlreadyExists('user')
 
         const passwordHash = await this.hashAdapter.hash(password)
         password = passwordHash;

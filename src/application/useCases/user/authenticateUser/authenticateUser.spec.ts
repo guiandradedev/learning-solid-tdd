@@ -2,7 +2,7 @@ import 'reflect-metadata'
 import 'dotenv/config'
 
 import { describe, expect, it } from "vitest";
-import { AppError } from '../../../../shared/errors';
+import { AppError, ErrNotFound } from '../../../../shared/errors';
 import { InMemoryActivateCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository } from "../../../../tests/repositories";
 import { AuthenticateUserUseCase, UserTokenResponse } from "./authenticateUserUseCase";
 import { CreateUserUseCase } from "../createUser/createUserUseCase";
@@ -51,12 +51,7 @@ describe('Authentication', async () => {
         }
 
         expect(async () => await sut.execute(dataObj)).not.toBeInstanceOf(User)
-        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(AppError)
-        expect(async () => await sut.execute(dataObj)).rejects.toThrow(
-            expect.objectContaining({
-                title: "ERR_USER_INVALID"
-            })
-        );
+        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(ErrNotFound)
     })
 
     it('Should throw an error if password != user.password', async () => {
@@ -74,12 +69,7 @@ describe('Authentication', async () => {
         }
 
         expect(async () => await sut.execute(dataObj)).not.toBeInstanceOf(User)
-        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(AppError)
-        expect(async () => await sut.execute(dataObj)).rejects.toThrow(
-            expect.objectContaining({
-                title: "ERR_USER_INVALID"
-            })
-        );
+        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(ErrNotFound)
     })
 
     it('should return an access and refresh token', async () => {

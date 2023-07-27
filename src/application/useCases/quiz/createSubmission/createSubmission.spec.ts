@@ -6,7 +6,7 @@ import { CreateUserUseCase } from "../../user/createUser/createUserUseCase";
 import { CreateQuizUseCase } from "../createQuiz/createQuizUseCase";
 import { CreateSubmissionUseCase } from "./createSubmissionUseCase";
 import { Submission } from "../../../../domain/entities";
-import { AppError } from '../../../../shared/errors';
+import { ErrInvalidParam, ErrNotFound, ErrUnauthorized } from '../../../../shared/errors';
 import { InMemoryUsersRepository, InMemoryQuizRepository, InMemoryQuestionsRepository, InMemorySubmissionsRepository, InMemoryUserTokenRepository, InMemoryActivateCodeRepository } from "../../../../tests/repositories";
 import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from '../../../../tests/adapters';
 
@@ -99,12 +99,7 @@ describe("Create Submission", async () => {
         }
 
         expect(async () => await sut.execute(dataObj)).not.toBeInstanceOf(Submission)
-        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(AppError)
-        expect(async () => await sut.execute(dataObj)).rejects.toThrow(
-            expect.objectContaining({
-                title: "ERR_QUIZ_NOT_FOUND"
-            })
-        );
+        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(ErrNotFound)
     })
 
     it('should throw an error (user does not exists)', async () => {
@@ -117,12 +112,7 @@ describe("Create Submission", async () => {
         }
 
         expect(async () => await sut.execute(dataObj)).not.toBeInstanceOf(Submission)
-        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(AppError)
-        expect(async () => await sut.execute(dataObj)).rejects.toThrow(
-            expect.objectContaining({
-                title: "ERR_USER_NOT_FOUND"
-            })
-        );
+        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(ErrNotFound)
     })
 
     it('should throw an error (owner cannot answer his own survey)', async () => {
@@ -135,12 +125,7 @@ describe("Create Submission", async () => {
         }
 
         expect(async () => await sut.execute(dataObj)).not.toBeInstanceOf(Submission)
-        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(AppError)
-        expect(async () => await sut.execute(dataObj)).rejects.toThrow(
-            expect.objectContaining({
-                title: "ERR_OWNER_CANNOT_ANSWER"
-            })
-        );
+        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(ErrUnauthorized)
     })
 
     it('should throw an error if it has a blank answer', async () => {
@@ -153,12 +138,7 @@ describe("Create Submission", async () => {
         }
 
         expect(async () => await sut.execute(dataObj)).not.toBeInstanceOf(Submission)
-        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(AppError)
-        expect(async () => await sut.execute(dataObj)).rejects.toThrow(
-            expect.objectContaining({
-                title: "ERR_BLANK_ANSWER"
-            })
-        );
+        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(ErrInvalidParam)
     })
 
     it('should throw an error if any answer is greater than question.length or less than 0', async () => {
@@ -171,12 +151,7 @@ describe("Create Submission", async () => {
         }
 
         expect(async () => await sut.execute(dataObj)).not.toBeInstanceOf(Submission)
-        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(AppError)
-        expect(async () => await sut.execute(dataObj)).rejects.toThrow(
-            expect.objectContaining({
-                title: "ERR_INVALID_USER_ANSWER"
-            })
-        );
+        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(ErrInvalidParam)
     })
 
     // it('should throw an error if')
