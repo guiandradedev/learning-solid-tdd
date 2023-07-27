@@ -1,8 +1,17 @@
-import { IUsersRepository } from "../../application/repositories/IUsersRepository";
+import { IUsersRepository, TypeChangeUserPassword } from "../../application/repositories/IUsersRepository";
 import { User } from "../../domain/entities/user";
 
 export class InMemoryUsersRepository implements IUsersRepository {
     public users: User[] = []
+
+    private async findIndexById(id: string): Promise<number> {
+        const user = this.users.findIndex(user => user.id === id)
+
+        if(user < 0) return null;
+
+
+        return user;
+    }
 
     async findByEmail(email: string): Promise<User | null> {
         const user = this.users.find(user => user.props.email === email)
@@ -31,4 +40,15 @@ export class InMemoryUsersRepository implements IUsersRepository {
         data.props.active = status
         return status; 
     }
+
+    async changePassword({userId, password}: TypeChangeUserPassword): Promise<User> {
+        const user = await this.findIndexById(userId)
+
+        if(user === null) return null
+
+        this.users[user].props.password = password
+
+        return this.users[user]
+    }
+
 }

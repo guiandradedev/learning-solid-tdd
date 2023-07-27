@@ -26,13 +26,13 @@ export class ForgotPasswordUseCase {
     async execute({ email }: ResetPasswordRequest): Promise<UserCode> {
         const userExists = await this.usersRepository.findByEmail(email)
         if (!userExists) throw new ErrNotFound('user')
-
-        const generateUserCode = new GenerateUserCode()
         
         if (!userExists.props.active) {
+            //resend activate email here?
             throw new ErrNotActive('user')
         }
-
+        
+        const generateUserCode = new GenerateUserCode()
         const { code, expiresIn } = generateUserCode.execute({ type: TypeCode.string, size: 6 })
 
         const userCode = UserCode.create({
