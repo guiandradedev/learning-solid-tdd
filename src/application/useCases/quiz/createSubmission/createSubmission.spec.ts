@@ -7,7 +7,7 @@ import { CreateQuizUseCase } from "../createQuiz/createQuizUseCase";
 import { CreateSubmissionUseCase } from "./createSubmissionUseCase";
 import { Submission } from "../../../../domain/entities";
 import { ErrInvalidParam, ErrNotFound, ErrUnauthorized } from '../../../../shared/errors';
-import { InMemoryUsersRepository, InMemoryQuizRepository, InMemoryQuestionsRepository, InMemorySubmissionsRepository, InMemoryUserTokenRepository, InMemoryActivateCodeRepository } from "../../../../tests/repositories";
+import { InMemoryUsersRepository, InMemoryQuizRepository, InMemoryQuestionsRepository, InMemorySubmissionsRepository, InMemoryUserTokenRepository, InMemoryUserCodeRepository } from "../../../../tests/repositories";
 import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from '../../../../tests/adapters';
 
 describe("Create Submission", async () => {
@@ -28,8 +28,8 @@ describe("Create Submission", async () => {
     const hashAdapter = new InMemoryHashAdapter()
     const securityAdapter = new InMemorySecurityAdapter()
     const mailAdapter = new InMemoryMailAdapter()
-    const activateCodeRepository = new InMemoryActivateCodeRepository()
-    const userAdapter = new CreateUserUseCase(usersRepository, userTokenRepository, activateCodeRepository, hashAdapter, securityAdapter, mailAdapter)
+    const userCodeRepository = new InMemoryUserCodeRepository()
+    const userAdapter = new CreateUserUseCase(usersRepository, userTokenRepository, userCodeRepository, hashAdapter, securityAdapter, mailAdapter)
 
     const user1 = await userAdapter.execute({
         email: "flaamer@gmail.com",

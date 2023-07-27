@@ -2,13 +2,13 @@ import 'reflect-metadata'
 
 import { describe, expect, it, vitest } from "vitest";
 import { AuthMiddlewareService } from "./authMiddlewareService";
-import { InMemoryActivateCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository } from "../../../../tests/repositories";
+import { InMemoryUserCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository } from "../../../../tests/repositories";
 import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from "../../../../tests/adapters";
 import { CreateUserUseCase } from "../../../../application/useCases/user/createUser/createUserUseCase";
 import { User } from "../../../../domain/entities";
 import { SecurityAdapter } from '../../../../shared/adapters';
-import { IUsersRepository } from 'application/repositories';
-import { UserAuthenticatetedResponse } from 'application/useCases/user/authenticateUser/authenticateUserUseCase';
+import { IUsersRepository } from '@/application/repositories';
+import { UserAuthenticateResponse } from 'application/useCases/user/authenticateUser/authenticateUserUseCase';
 import { v4 as uuidv4 } from 'uuid';
 import { ErrInvalidParam, ErrNotFound } from '../../../../shared/errors';
 
@@ -17,7 +17,7 @@ describe("AuthMiddlewareService", () => {
         usersRepository: IUsersRepository
         securityAdapter: SecurityAdapter
         userSut: CreateUserUseCase
-        user: UserAuthenticatetedResponse,
+        user: UserAuthenticateResponse,
         sut: AuthMiddlewareService
     }
     const makeSut = async (): Promise<TypeSut> => {
@@ -26,8 +26,8 @@ describe("AuthMiddlewareService", () => {
         const hashAdapter = new InMemoryHashAdapter();
         const securityAdapter = new InMemorySecurityAdapter()
         const mailAdapter = new InMemoryMailAdapter()
-        const activateCodeRepository = new InMemoryActivateCodeRepository()
-        const userSut = new CreateUserUseCase(usersRepository, userTokenRepository, activateCodeRepository, hashAdapter, securityAdapter, mailAdapter)
+        const userCodeRepository = new InMemoryUserCodeRepository()
+        const userSut = new CreateUserUseCase(usersRepository, userTokenRepository, userCodeRepository, hashAdapter, securityAdapter, mailAdapter)
         const user = await userSut.execute({
             name: "Flaamer",
             email: "teste@teste.com",

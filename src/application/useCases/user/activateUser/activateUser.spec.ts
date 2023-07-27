@@ -3,7 +3,7 @@ import 'reflect-metadata'
 import { describe, expect, it, vitest } from "vitest";
 import { CreateUserResponse, CreateUserUseCase } from "../createUser/createUserUseCase";
 import { IUsersRepository } from "@/application/repositories";
-import { InMemoryActivateCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository } from "@/tests/repositories";
+import { InMemoryUserCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository } from "@/tests/repositories";
 import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from "@/tests/adapters";
 import { UserCode, User } from '@/domain/entities';
 import { ActivateUserUseCase } from './activateUserUseCase';
@@ -15,11 +15,11 @@ describe("ActivateUserCode", () => {
     const makeSut = async (): Promise<{ sut: ActivateUserUseCase, usersRepository: IUsersRepository, user: CreateUserResponse }> => {
         const usersRepository = new InMemoryUsersRepository()
         const userTokenRepository = new InMemoryUserTokenRepository()
-        const activateCodeRepository = new InMemoryActivateCodeRepository()
+        const userCodeRepository = new InMemoryUserCodeRepository()
         const hashAdapter = new InMemoryHashAdapter();
         const securityAdapter = new InMemorySecurityAdapter()
         const mailAdapter = new InMemoryMailAdapter()
-        const sutUser = new CreateUserUseCase(usersRepository, userTokenRepository, activateCodeRepository, hashAdapter, securityAdapter, mailAdapter)
+        const sutUser = new CreateUserUseCase(usersRepository, userTokenRepository, userCodeRepository, hashAdapter, securityAdapter, mailAdapter)
 
         const user = await sutUser.execute({
             name: "Flaamer",
@@ -27,7 +27,7 @@ describe("ActivateUserCode", () => {
             password: "teste123"
         })
 
-        const sut = new ActivateUserUseCase(usersRepository, activateCodeRepository, mailAdapter)
+        const sut = new ActivateUserUseCase(usersRepository, userCodeRepository, mailAdapter)
 
         return { sut, usersRepository, user }
     }
@@ -67,11 +67,11 @@ describe("ActivateUserCode", () => {
     it('should throw an error if code expired', async () => {
         const usersRepository = new InMemoryUsersRepository()
         const userTokenRepository = new InMemoryUserTokenRepository()
-        const activateCodeRepository = new InMemoryActivateCodeRepository()
+        const userCodeRepository = new InMemoryUserCodeRepository()
         const hashAdapter = new InMemoryHashAdapter();
         const securityAdapter = new InMemorySecurityAdapter()
         const mailAdapter = new InMemoryMailAdapter()
-        const sutUser = new CreateUserUseCase(usersRepository, userTokenRepository, activateCodeRepository, hashAdapter, securityAdapter, mailAdapter)
+        const sutUser = new CreateUserUseCase(usersRepository, userTokenRepository, userCodeRepository, hashAdapter, securityAdapter, mailAdapter)
 
         const generateActivateCode = vitest.spyOn(GenerateUserCode.prototype, 'execute')
         const date = new Date()
@@ -84,7 +84,7 @@ describe("ActivateUserCode", () => {
             password: "teste123"
         })
 
-        const sut = new ActivateUserUseCase(usersRepository, activateCodeRepository, mailAdapter)
+        const sut = new ActivateUserUseCase(usersRepository, userCodeRepository, mailAdapter)
 
         const code = sut.execute({
             userId: user.id,

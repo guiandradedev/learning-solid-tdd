@@ -1,14 +1,14 @@
-import { FindByCodeAndUserId, IActivateCodeRepository } from "../../application/repositories";
-import { ActivateCode } from "../../domain/entities";
+import { FindByCodeAndUserId, IUserCodeRepository } from "../../application/repositories";
+import { UserCode } from "../../domain/entities";
 
-export class InMemoryActivateCodeRepository implements IActivateCodeRepository {
-    public codes: ActivateCode[] = []
+export class InMemoryUserCodeRepository implements IUserCodeRepository {
+    public codes: UserCode[] = []
 
-    async create(data: ActivateCode): Promise<void> {
+    async create(data: UserCode): Promise<void> {
         this.codes.push(data)
     }
 
-    async findByCodeAndUserId({code, userId}: FindByCodeAndUserId): Promise<ActivateCode> {
+    async findByCodeAndUserId({code, userId}: FindByCodeAndUserId): Promise<UserCode> {
         const data = this.codes.find((c)=>c.props.code == code && c.props.userId == userId)
 
         if(!data) return null;
