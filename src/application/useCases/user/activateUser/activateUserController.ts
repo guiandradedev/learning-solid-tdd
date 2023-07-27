@@ -19,7 +19,7 @@ export class ActivateUserController {
                 userId
             })
 
-            return response.status(200).json({data: user});
+            return response.status(200).json({data: 'Account activated!'});
         } catch (error) {
             console.log(error)
             if(error instanceof AppError) {

@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
 import { SecurityAdapter } from "../../../../shared/adapters";
-import { AppError, ErrServerError, ErrInvalidParam, ErrNotFound } from "../../../../shared/errors";
+import { AppError, ErrServerError, ErrInvalidParam, ErrNotFound, ErrNotActive } from "../../../../shared/errors";
 import { IUsersRepository } from "../../../../application/repositories";
 import { User } from "../../../../domain/entities";
 
@@ -26,6 +26,8 @@ export class AuthMiddlewareService {
             const user = await this.usersRepository.findById(decrypt.subject)
 
             if (!user) throw new ErrNotFound('user');
+
+            if(!user.props.active) throw new ErrNotActive('user')
 
             return user;
         } catch (error) {
