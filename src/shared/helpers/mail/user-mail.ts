@@ -3,7 +3,12 @@ export type AuthMailRequest = {
     code: string | number
 }
 
+export type TypePasswordResetConfirmationMail = {
+    to: string
+}
+
 export interface UserMail {
     authMail(_options: AuthMailRequest): Promise<void>;
     resetPasswordMail({ to, code }: AuthMailRequest): Promise<void>
+    passwordResetConfirmationMail({ to }: TypePasswordResetConfirmationMail): Promise<void>
 }

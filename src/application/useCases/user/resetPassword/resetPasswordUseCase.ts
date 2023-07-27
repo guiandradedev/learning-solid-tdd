@@ -3,6 +3,7 @@ import { User } from "@/domain/entities";
 import { MailAdapter } from "@/shared/adapters";
 import { ErrInvalidParam, ErrNotFound } from "@/shared/errors";
 import { ErrExpired } from "@/shared/errors/ErrExpired";
+import { SendUserMail } from "@/shared/helpers/mail/SendUserMail";
 import { inject, injectable } from "tsyringe";
 
 type ResetPasswordRequest = {
@@ -37,6 +38,9 @@ export class ResetPasswordUseCase {
         const user = await this.usersRepository.changePassword({ userId: codeExists.props.userId, password })
 
         if (!user) throw new ErrNotFound('user')
+
+        const sendUserMail = new SendUserMail(this.mailAdapter)
+        await sendUserMail.passwordResetConfirmationMail({ to: user.props.email })
 
         return user
     }
