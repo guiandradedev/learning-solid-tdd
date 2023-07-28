@@ -26,7 +26,6 @@ export class CreateUserController {
             if(error instanceof AppError) {
                 return response.status(error.status).json({ errors: [error] })
             }
-            console.log(error)
             return response.status(500).json({erros: [new ErrServerError()]})
         }
     }

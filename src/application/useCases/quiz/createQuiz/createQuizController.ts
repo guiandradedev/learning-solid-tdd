@@ -24,7 +24,6 @@ export class CreateQuizController {
 
             return response.status(201).json(quiz); 
         } catch (error) {
-            console.log(error)
             if(error instanceof AppError) {
                 return response.status(error.status).json({ errors: [error] })
             }

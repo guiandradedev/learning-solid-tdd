@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { container } from "tsyringe";
 import { AppError, ErrInvalidParam, ErrServerError } from "@/shared/errors";
-import { userTokenResponse } from "@/shared/helpers/response";
 import { ResetPasswordRequest, ResetPasswordUseCase } from "./resetPasswordUseCase";
 
 export class ResetPasswordController {

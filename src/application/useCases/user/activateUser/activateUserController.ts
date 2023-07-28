@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { container } from "tsyringe";
 import { AppError, ErrInvalidParam, ErrServerError } from "@/shared/errors";
 import { ActivateUserRequest, ActivateUserUseCase } from "./activateUserUseCase";
-import { userTokenResponse } from "@/shared/helpers/response";
 
 export class ActivateUserController {
 
@@ -21,7 +20,6 @@ export class ActivateUserController {
 
             return response.status(200).json({data: 'Account activated!'});
         } catch (error) {
-            console.log(error)
             if(error instanceof AppError) {
                 return response.status(error.status).json({ errors: [error] })
             }

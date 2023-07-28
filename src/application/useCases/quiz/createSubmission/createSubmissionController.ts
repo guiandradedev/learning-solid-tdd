@@ -22,7 +22,6 @@ export class CreateSubmissionController {
 
             return response.status(201).json(submission);
         } catch (error) {
-            console.log(error)
             if (error instanceof AppError) {
                 return response.status(error.status).json({ errors: [error] })
             }

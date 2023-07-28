@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { container } from "tsyringe";
 import { AppError } from "../../../../shared/errors/AppError";
-import { ErrInvalidParam, ErrServerError } from "@/shared/errors";
+import { ErrServerError } from "@/shared/errors";
 import { GetSubmissionsUseCase } from "./getSubmissionsUseCase";
 
 export class GetSubmissionsController {
@@ -14,7 +14,6 @@ export class GetSubmissionsController {
 
             return response.status(201).json(quiz);
         } catch (error) {
-            console.log(error)
             if (error instanceof AppError) {
                 return response.status(error.status).json({ errors: [error] })
             }

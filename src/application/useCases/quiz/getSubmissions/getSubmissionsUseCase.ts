@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
 import { ErrNotFound } from "../../../../shared/errors";
-import { ISubmissionRepository, IUsersRepository } from "../../../repositories";
+import { ISubmissionRepository } from "../../../repositories";
 
 @injectable()
 export class GetSubmissionsUseCase {
