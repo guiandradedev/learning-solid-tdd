@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
 import { IUserCodeRepository, IUsersRepository } from "../../../repositories";
-import { ErrInvalidParam, ErrNotFound } from "../../../../shared/errors";
+import { ErrAlreadyActive, ErrInvalidParam, ErrNotFound } from "../../../../shared/errors";
 import { MailAdapter } from "../../../../shared/adapters";
 import { GenerateUserCode, TypeCode } from "../../../services/GenerateUserCode";
 import { UserCode } from "../../../../domain/entities";
@@ -28,6 +28,8 @@ export class ActivateUserUseCase {
     async execute({ code, userId }: ActivateUserRequest) {
         const userExists = await this.userRepository.findById(userId)
         if(!userExists) throw new ErrNotFound('user')
+
+        if(userExists.props.active) throw new ErrAlreadyActive('user')
 
         const codeExists = await this.userCodeRepository.findByCodeAndUserId({ code, userId, type: 'ACTIVATE_ACCOUNT' })
         if (!codeExists) throw new ErrInvalidParam('code')

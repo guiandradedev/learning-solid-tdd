@@ -9,3 +9,13 @@ export class ErrNotActive extends AppError {
         })
     }
 }
+
+export class ErrAlreadyActive extends AppError {
+    constructor(param: string) {
+        super({
+            message: `${param} already active`,
+            status: 401,
+            title: "ErrAlreadyActive"
+        })
+    }
+}
