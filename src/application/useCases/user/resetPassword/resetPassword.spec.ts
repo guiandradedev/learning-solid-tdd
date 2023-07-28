@@ -58,8 +58,6 @@ describe('Reset Password', () => {
             confirmPassword: password
         })
 
-        console.log(reset)
-
         expect(reset).toBeInstanceOf(User)
         expect(user.props.password).toBe(await hashAdapter.hash(password))
         // expect(user.props.password).not.toBe(oldPassword)

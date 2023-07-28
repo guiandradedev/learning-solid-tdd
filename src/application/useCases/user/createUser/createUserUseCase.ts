@@ -81,11 +81,9 @@ export class CreateUserUseCase {
                 type: "ACTIVATE_ACCOUNT"
             })
             await this.UserCodeRepository.create(userCode)
-
-            console.log(code)
     
-            // const sendUserMail = new SendUserMail(this.mailAdapter)
-            // await sendUserMail.authMail({to: email, code})
+            const sendUserMail = new SendUserMail(this.mailAdapter)
+            await sendUserMail.authMail({to: email, code})
         }
 
         return userReturn;

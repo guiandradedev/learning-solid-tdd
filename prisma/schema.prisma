@@ -13,8 +13,33 @@ model User {
     email      String       @unique
     password   String
     active     Boolean
+    
     quizzes    Quiz[]
-    Submission Submission[]
+    submissions Submission[]
+    userTokens  UserToken[]
+    userCodes   UserCode[]
+}
+
+model UserToken {
+    id                      String   @id
+    refreshToken            String
+    refreshTokenExpiresDate Int
+    createdAt               DateTime
+    userId                  String
+
+    user User @relation(fields: [userId], references: [id])
+}
+
+model UserCode {
+    id        String   @id
+    code      String
+    expiresIn DateTime
+    createdAt DateTime
+    type      String
+    active    Boolean
+    userId    String
+
+    user User @relation(fields: [userId], references: [id])
 }
 
 model Quiz {

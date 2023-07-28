@@ -14,7 +14,6 @@ export interface ResponseAdapter {
 }
 
 export const userResponse = (user: User): ResponseAdapter => {
-    console.log(user)
     return {
         id: user.id,
         attributes: {
