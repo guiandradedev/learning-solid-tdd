@@ -7,6 +7,8 @@ import { GetQuizController } from '@/application/useCases/quiz/GetQuiz/getQuizCo
 import { GetQuizzesController } from '@/application/useCases/quiz/getQuizzes/getQuizzesController'
 import { CreateSubmissionController } from '@/application/useCases/quiz/createSubmission/createSubmissionController'
 import { GetUserSubmissionsController } from '@/application/useCases/quiz/getUserSubmissions/getUserSubmissionsController'
+import { GetSubmissionController } from '@/application/useCases/quiz/getSubmission/getSubmissionController'
+import { GetSubmissionsController } from '@/application/useCases/quiz/getSubmissions/getSubmissionsController'
 
 const routes = Router()
 const authMiddlewareController = new AuthMiddlewareController()
@@ -16,11 +18,13 @@ const getQuizController = new GetQuizController()
 const getQuizzesController = new GetQuizzesController()
 const createSubmissionController = new CreateSubmissionController()
 const getUserSubmissionsController = new GetUserSubmissionsController()
+const getSubmissionController = new GetSubmissionController()
+const getSubmissionsController = new GetSubmissionsController()
 
-routes.get('/submission/', authMiddlewareController.execute, (req, res)=>{res.send("incomplete")})
+routes.get('/submission/', authMiddlewareController.execute, getSubmissionsController.handle)
 routes.post('/submission', authMiddlewareController.execute, createSubmissionValidationRules(), validateRules, createSubmissionController.handle)
 routes.get('/submission/user/:search', authMiddlewareController.execute, getUserSubmissionsController.handle)
-routes.get('/submission/:search', authMiddlewareController.execute, (req, res)=>{res.send("incomplete")})
+routes.get('/submission/:search', authMiddlewareController.execute, getSubmissionController.handle)
 
 routes.post('/', authMiddlewareController.execute, createQuizValidationRules(), createQuizQuestionValidationRules(), validateRules, createQuizController.handle)
 routes.get('/', authMiddlewareController.execute, getQuizzesController.handle)
