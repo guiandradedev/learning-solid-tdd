@@ -1,7 +1,6 @@
 import { ErrNotFound } from "@/shared/errors/ErrNotFound";
 import { Question } from "../../../../domain/entities/question";
 import { Quiz, QuizProps } from "../../../../domain/entities/quiz";
-import { AppError } from "../../../../shared/errors/AppError";
 import { IQuestionRepository } from "../../../repositories/IQuestionRepository";
 import { IQuizRepository } from "../../../repositories/IQuizRepository";
 import { IUsersRepository } from "../../../repositories/IUsersRepository";
@@ -13,8 +12,12 @@ type QuestionProps = {
     answers: string[]
     correctAnswer: number
 }
-export interface CreateQuizProps extends QuizProps {
+
+export interface CreateQuizProps {
+    title: string,
+    ownerId: string,
     questions: QuestionProps[],
+    createdAt?: Date
 }
 
 @injectable()
@@ -40,7 +43,7 @@ export class CreateQuizUseCase {
 
         if(!userExists) throw new ErrNotFound('user')
 
-        const quizBase = Quiz.create({ title, ownerId, createdAt })
+        const quizBase = Quiz.create({ title, ownerId, createdAt: createdAt ?? new Date() })
 
         await this.quizRepository.create(quizBase)
 
@@ -54,7 +57,9 @@ export class CreateQuizUseCase {
             qs.push(q)
         }
 
-        const quiz = Object.assign(quizBase, { questions: qs })
+        const newQuizInstance = Quiz.create({...quizBase.props}, quizBase.id)
+
+        const quiz = Object.assign(newQuizInstance, { questions: qs })
 
         return quiz
     }

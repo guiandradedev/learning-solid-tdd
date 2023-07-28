@@ -2,19 +2,15 @@ import { Request, Response } from "express";
 import { container } from "tsyringe";
 import { AppError } from "../../../../shared/errors/AppError";
 import { ErrInvalidParam, ErrServerError } from "@/shared/errors";
-import { GetQuizUseCase } from "./getQuizUseCase";
+import { GetQuizzesUseCase } from "./getQuizzesUseCase";
 
-export class GetQuizController {
+export class GetQuizzesController {
 
     async handle(request: Request, response: Response): Promise<Response> {
-        const { search } = request.params
-
-        if(!search) return response.status(422).json({erros: [new ErrInvalidParam('search')]})
-
         try {
-            const getQuizUseCase = container.resolve(GetQuizUseCase)
+            const getQuizzesUseCase = container.resolve(GetQuizzesUseCase)
 
-            const quiz = await getQuizUseCase.execute({quizId: search})
+            const quiz = await getQuizzesUseCase.execute()
 
             return response.status(201).json(quiz);
         } catch (error) {

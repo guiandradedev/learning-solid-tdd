@@ -9,7 +9,6 @@ export class InMemoryUsersRepository implements IUsersRepository {
 
         if(user < 0) return null;
 
-
         return user;
     }
 
@@ -18,7 +17,7 @@ export class InMemoryUsersRepository implements IUsersRepository {
 
         if(!user) return null;
 
-        return user;
+        return User.create({...user.props}, user.id);
     }
 
     async create(data: User): Promise<void> {
@@ -30,7 +29,7 @@ export class InMemoryUsersRepository implements IUsersRepository {
 
         if(!user) return null;
 
-        return user;
+        return User.create({...user.props}, user.id);
     }
 
     async changeStatus(id: string): Promise<boolean> {
@@ -48,7 +47,7 @@ export class InMemoryUsersRepository implements IUsersRepository {
 
         this.users[user].props.password = password
 
-        return this.users[user]
+        return User.create({...this.users[user].props}, this.users[user].id)
     }
 
 }

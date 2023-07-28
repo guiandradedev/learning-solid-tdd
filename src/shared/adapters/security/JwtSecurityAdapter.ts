@@ -10,8 +10,8 @@ interface EncryptOptions {
 export class JwtSecurityAdapter implements SecurityAdapter {
     private mapper(data: JwtPayload): SecurityDecryptResponse {
         return {
-            expiresIn: data.exp,
-            issuedAt: data.exp,
+            expiresIn: new Date(data.exp),
+            issuedAt: new Date(data.iat),
             // payload: data.
             subject: data.sub
         }

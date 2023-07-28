@@ -24,7 +24,9 @@ export class GetQuizUseCase {
 
         if(!questions) throw new ErrNotFound('questions')
 
-        const response = Object.assign(quiz, questions)
+        const newQuizInstance = Quiz.create({...quiz.props}, quiz.id)
+        
+        const response: Quiz = Object.assign(newQuizInstance, {questions})
 
         return response;
     }

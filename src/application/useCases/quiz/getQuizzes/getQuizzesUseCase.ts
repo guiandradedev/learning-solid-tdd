@@ -1,3 +1,4 @@
+import { inject, injectable } from "tsyringe";
 import { Question, Quiz } from "../../../../domain/entities";
 import { AppError } from "../../../../shared/errors";
 import { IQuizRepository, IQuestionRepository } from "../../../repositories/";
@@ -6,9 +7,12 @@ interface ReturnQuiz extends Quiz{
     questions: Question[]
 }
 
+@injectable()
 export class GetQuizzesUseCase {
     constructor(
+        @inject('QuizRepository')
         private quizRepository: IQuizRepository,
+        @inject('QuestionRepository')
         private questionsRepository: IQuestionRepository
     ) { }
 
@@ -21,9 +25,10 @@ export class GetQuizzesUseCase {
         
         for(const q of quizzes) {
             const questions = await this.questionsRepository.findByQuizId(q.id)
-            qzs.push(Object.assign(q, {
+            const data: ReturnQuiz = Object.assign(q, {
                 questions
-            }))
+            })
+            qzs.push(data)
         }
 
         return qzs

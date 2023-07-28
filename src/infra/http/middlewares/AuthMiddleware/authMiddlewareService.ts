@@ -18,7 +18,7 @@ export class AuthMiddlewareService {
         private securityAdapter: SecurityAdapter
     ) { }
 
-    async execute({ token }: AuthMiddlewareDTO): Promise<User | null> {
+    async execute({ token }: AuthMiddlewareDTO): Promise<User> {
         try {
             const decrypt = this.securityAdapter.decrypt(token, process.env.ACCESS_TOKEN)
             if (!decrypt) throw new ErrInvalidParam('token');

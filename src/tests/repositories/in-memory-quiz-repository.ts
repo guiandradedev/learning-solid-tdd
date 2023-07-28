@@ -13,7 +13,7 @@ export class InMemoryQuizRepository implements IQuizRepository {
 
         if(!quiz) return null;
 
-        return quiz;
+        return Quiz.create({...quiz.props}, quiz.id);
     }
 
     async list(request?: QuizRequestRepository): Promise<Quiz[] | null> {

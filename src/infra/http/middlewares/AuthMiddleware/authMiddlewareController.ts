@@ -24,15 +24,15 @@ export class AuthMiddlewareController {
 
             next();
         } catch (error) {
-            if (error instanceof Error) {
-                return res
-                    .status(new ErrServerError().status)
-                    .json({ errors: [new ErrServerError()] });
-            }
             if (error instanceof AppError) {
                 return res
                     .status(error.status)
                     .json({ errors: [error] });
+            }
+            if (error instanceof Error) {
+                return res
+                    .status(new ErrServerError().status)
+                    .json({ errors: [new ErrServerError()] });
             }
             return res
                 .status(new ErrServerError().status)
