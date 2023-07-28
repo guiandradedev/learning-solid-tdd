@@ -21,7 +21,8 @@
       "@/domain/*": ["domain/*"],
       "@/infra/*": ["infra/*"],
       "@/shared/*": ["shared/*"],
-      "@/tests/*": ["tests/*"]
+      "@/tests/*": ["tests/*"],
+      "@/modules/*": ["modules/*"]
     },
     "outDir": "./dist",
     "strictNullChecks": false,
