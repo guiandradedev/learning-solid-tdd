@@ -23,7 +23,7 @@ model User {
 model UserToken {
     id                      String   @id
     refreshToken            String
-    refreshTokenExpiresDate Int
+    refreshTokenExpiresDate DateTime
     createdAt               DateTime
     userId                  String
 

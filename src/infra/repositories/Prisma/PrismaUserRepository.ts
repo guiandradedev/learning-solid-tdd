@@ -1,4 +1,4 @@
-import { IUsersRepository } from "../../../application/repositories/IUsersRepository";
+import { IUsersRepository, TypeChangeUserPassword } from "../../../application/repositories/IUsersRepository";
 import { User } from "../../../domain/entities/user";
 import { prismaUserToEntity } from "../../../shared/mappers/Prisma/user-map";
 import { prismaClient } from "../../../shared/providers/database/prisma";
@@ -10,9 +10,7 @@ export class PrismaUserRepository implements IUsersRepository {
 
         if (!user) return null;
 
-        const u = prismaUserToEntity(user)
-
-        return u;
+        return prismaUserToEntity(user);
     }
 
     async create(data: User): Promise<void> {
@@ -24,9 +22,37 @@ export class PrismaUserRepository implements IUsersRepository {
 
         if (!user) return null;
 
-        const u = prismaUserToEntity(user)
+        return prismaUserToEntity(user);
+    }
 
-        return u;
+    async changeStatus(id: string): Promise<boolean> {
+        const user = await this.findById(id)
+        if(!user) return null;
+
+        const status = !user.props.active
+
+        await prismaClient.user.update({
+            where: {id},
+            data: {
+                active: status
+            }
+        })
+
+        return status
+    }
+
+    async changePassword({password, userId}: TypeChangeUserPassword): Promise<User> {
+        const user = await this.findById(userId)
+        if(!user) return null;
+
+        const u = await prismaClient.user.update({
+            where: {id: userId},
+            data: {
+                password
+            }
+        })
+
+        return prismaUserToEntity(u);
     }
 
 }

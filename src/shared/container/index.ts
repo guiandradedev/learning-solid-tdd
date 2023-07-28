@@ -1,9 +1,9 @@
 import { container } from "tsyringe";
 
-// import { PrismaUserRepository } from "../../infra/repositories/Prisma/PrismaUserRepository";
+import { PrismaUserRepository } from "../../infra/repositories/Prisma/PrismaUserRepository";
 // import { PrismaQuizRepository } from "../../infra/repositories/Prisma/PrismaQuizRepository";
 // import { PrismaQuestionRepository } from "../../infra/repositories/Prisma/PrismaQuestionRepository";
-// import { PrismaUserTokenRepository } from "../../infra/repositories/Prisma/PrismaUserTokenRepository";
+import { PrismaUserTokenRepository } from "../../infra/repositories/Prisma/PrismaUserTokenRepository";
 // import { PrismaSubmissionRepository } from "../../infra/repositories/Prisma/PrismaSubmissionRepository";
 
 import { IUsersRepository } from "../../application/repositories/IUsersRepository";
@@ -18,11 +18,12 @@ import { MailAdapter } from "../adapters/mail";
 import { NodemailerMailAdapter } from "../adapters/mail/NodemailerMailAdapter";
 import { InMemoryQuestionsRepository, InMemoryQuizRepository, InMemorySubmissionsRepository, InMemoryUserCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository } from "@/tests/repositories";
 import { IUserCodeRepository } from "@/application/repositories";
+import { PrismaUserCodeRepository } from "@/infra/repositories/Prisma/PrismaUserCodeRepository";
 
 //Repositories
 container.registerSingleton<IUsersRepository>(
     "UsersRepository",
-    InMemoryUsersRepository
+    PrismaUserRepository
 )
 
 container.registerSingleton<IQuizRepository>(
@@ -37,7 +38,7 @@ container.registerSingleton<IQuestionRepository>(
 
 container.registerSingleton<IUserTokenRepository>(
     "UserTokenRepository",
-    InMemoryUserTokenRepository
+    PrismaUserTokenRepository
 )
 
 container.registerSingleton<ISubmissionRepository>(
@@ -47,7 +48,7 @@ container.registerSingleton<ISubmissionRepository>(
 
 container.registerSingleton<IUserCodeRepository>(
     "UserCodeRepository",
-    InMemoryUserCodeRepository
+    PrismaUserCodeRepository
 )
 
 //Adapters

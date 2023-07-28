@@ -1,8 +1,8 @@
 export type SecurityDecryptResponse = {
     subject: string,
     // payload: any,
-    expiresIn: number,
-    issuedAt: number
+    expiresIn: Date,
+    issuedAt: Date
 }
 
 export interface SecurityAdapter {

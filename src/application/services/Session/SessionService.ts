@@ -22,8 +22,8 @@ class CreateSession {
                 expiresIn: process.env.EXPIRES_IN_REFRESH_TOKEN,
             });
 
-            const refreshTokenExpiresDate = new Date().getTime() + Number(process.env.EXPIRES_IN_TOKEN)
-            const accessTokenExpiresDate = new Date().getTime() + Number(process.env.EXPIRES_IN_REFRESH_TOKEN)
+            const refreshTokenExpiresDate = new Date(new Date().getTime() + Number(process.env.EXPIRES_IN_TOKEN))
+            const accessTokenExpiresDate = new Date(new Date().getTime() + Number(process.env.EXPIRES_IN_REFRESH_TOKEN))
 
             return { accessToken, refreshToken, refreshTokenExpiresDate, accessTokenExpiresDate };
 
