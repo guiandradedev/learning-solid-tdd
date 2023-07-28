@@ -4,7 +4,7 @@ import 'dotenv/config'
 import { describe, expect, it } from "vitest";
 import { InMemoryQuizRepository, InMemoryQuestionsRepository, InMemoryUsersRepository, InMemorySubmissionsRepository, InMemoryUserTokenRepository, InMemoryUserCodeRepository } from "../../../../tests/repositories";
 import { CreateQuizUseCase } from "../../quiz/createQuiz/createQuizUseCase";
-import { User, Quiz, Question, Submission } from "../../../../domain/entities";
+import { Quiz, Submission } from "../../../../domain/entities";
 import { CreateUserUseCase } from "../../user/createUser/createUserUseCase";
 import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from '../../../../tests/adapters';
 import { AppError } from '@/shared/errors';
@@ -87,7 +87,7 @@ describe("Get Quizzes", async () => {
 
         const submissions = await sut.execute()
 
-        expect(submissions.every((quiz) => quiz instanceof Submission)).toBe(true);
+        expect(submissions.every((submission) => submission instanceof Submission)).toBe(true);
     })
 
     it('should throw an error if does not have any quiz stored', async () => {
@@ -95,7 +95,7 @@ describe("Get Quizzes", async () => {
         const sut = new GetSubmissionsUseCase(SubmissionRepository)
         const submission = sut.execute()
 
-        expect(submission).rejects.not.toBeInstanceOf(Quiz)
+        expect(submission).rejects.not.toBeInstanceOf(Submission)
         // expect(async () => await sut.execute()).rejects.not.toEqual(expect.arrayContaining(expect.any(Quiz)));
         expect(submission).rejects.toBeInstanceOf(AppError)
     })
