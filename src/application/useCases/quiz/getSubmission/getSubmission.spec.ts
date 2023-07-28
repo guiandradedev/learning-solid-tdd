@@ -11,7 +11,7 @@ import { CreateSubmissionUseCase } from '../createSubmission/createSubmissionUse
 import { GetSubmissionUseCase } from './getSubmissionUseCase';
 import { Submission } from '@/domain/entities';
 
-describe("Get Quiz", async () => {
+describe("Get Submission", async () => {
     const makeSut = async () => {
         const usersRepository = new InMemoryUsersRepository()
         const userTokenRepository = new InMemoryUserTokenRepository()
