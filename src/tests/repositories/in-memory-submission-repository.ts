@@ -1,4 +1,4 @@
-import { ISubmissionRepository } from "../../application/repositories/ISubmissionRepository";
+import { ISubmissionRepository, SubmissionRequestRepository } from "../../application/repositories/ISubmissionRepository";
 import { Submission } from "../../domain/entities/submission";
 
 export class InMemorySubmissionsRepository implements ISubmissionRepository {
@@ -21,5 +21,10 @@ export class InMemorySubmissionsRepository implements ISubmissionRepository {
         if(submissions.length == 0) return null
 
         return submissions;
+    }
+
+    async list(request?: SubmissionRequestRepository): Promise<Submission[]> {
+        if(this.submissions.length == 0) return null;
+        return this.submissions
     }
 }
