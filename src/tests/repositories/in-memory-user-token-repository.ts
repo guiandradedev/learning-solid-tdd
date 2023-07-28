@@ -1,5 +1,5 @@
 import { IUserTokenRepository } from "../../application/repositories/IUserTokenRepository";
-import { UserToken } from "../../domain/entities/user-token";
+import { UserToken } from "../../domain/entities";
 
 export class InMemoryUserTokenRepository implements IUserTokenRepository {
     public tokens: UserToken[] = []

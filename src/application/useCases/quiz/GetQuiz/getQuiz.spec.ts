@@ -4,7 +4,7 @@ import 'dotenv/config'
 import { describe, expect, it } from "vitest";
 import { CreateQuizUseCase } from "../createQuiz/createQuizUseCase";
 import { CreateUserUseCase } from "../../user/createUser/createUserUseCase";
-import { Quiz } from "@/domain/entities/quiz";
+import { Quiz } from "@/domain/entities";
 import { GetQuizUseCase } from './getQuizUseCase';
 import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from '@/tests/adapters';
 import { InMemoryUserCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository, InMemoryQuizRepository, InMemoryQuestionsRepository } from '@/tests/repositories';

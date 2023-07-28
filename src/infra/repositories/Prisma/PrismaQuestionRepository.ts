@@ -1,6 +1,6 @@
 import { prismaQuestionToEntity } from "../../../shared/mappers/Prisma/question-map";
 import { IQuestionRepository } from "../../../application/repositories/IQuestionRepository";
-import { Question } from "../../../domain/entities/question";
+import { Question } from "../../../modules/quiz/domain/question";
 import { prismaClient } from "../../../shared/providers/database/prisma";
 import { v4 as uuidv4 } from 'uuid'
 export class PrismaQuestionRepository implements IQuestionRepository {

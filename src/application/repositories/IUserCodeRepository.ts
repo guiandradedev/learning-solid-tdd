@@ -1,4 +1,4 @@
-import { TypesUserCode, UserCode } from "@/domain/entities/user-code";
+import { TypesUserCode, UserCode } from "modules/user/domain/user-code";
 
 export type FindByCodeAndUserId = {
     code: string,

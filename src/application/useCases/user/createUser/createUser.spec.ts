@@ -2,7 +2,7 @@ import 'dotenv/config'
 import 'reflect-metadata'
 import { describe, it, expect } from "vitest";
 import { CreateUserUseCase } from "./createUserUseCase";
-import { User } from "@/domain/entities/user";
+import { User } from "@/domain/entities";
 import { AppError } from '@/shared/errors';
 import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from '@/tests/adapters';
 import { InMemoryUserCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository } from '@/tests/repositories';

@@ -1,6 +1,6 @@
 import { ErrNotFound } from "@/shared/errors/ErrNotFound";
-import { Question } from "../../../../domain/entities/question";
-import { Quiz, QuizProps } from "../../../../domain/entities/quiz";
+import { Question } from "../../../../modules/quiz/domain/question";
+import { Quiz, QuizProps } from "../../../../domain/entities";
 import { IQuestionRepository } from "../../../repositories/IQuestionRepository";
 import { IQuizRepository } from "../../../repositories/IQuizRepository";
 import { IUsersRepository } from "../../../repositories/IUsersRepository";

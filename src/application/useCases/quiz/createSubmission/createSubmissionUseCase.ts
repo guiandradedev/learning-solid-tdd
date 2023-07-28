@@ -1,5 +1,5 @@
 import { ErrInvalidParam, ErrNotFound, ErrUnauthorized } from "@/shared/errors";
-import { Submission } from "../../../../domain/entities/submission";
+import { Submission } from "../../../../domain/entities";
 import { IQuestionRepository } from "../../../repositories/IQuestionRepository";
 import { IQuizRepository } from "../../../repositories/IQuizRepository";
 import { ISubmissionRepository } from "../../../repositories/ISubmissionRepository";

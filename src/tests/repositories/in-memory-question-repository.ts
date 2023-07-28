@@ -1,5 +1,5 @@
 import { IQuestionRepository } from "../../application/repositories/IQuestionRepository";
-import { Question } from "../../domain/entities/question";
+import { Question } from "../../domain/entities";
 
 export class InMemoryQuestionsRepository implements IQuestionRepository {
     public questions: Question[] = []

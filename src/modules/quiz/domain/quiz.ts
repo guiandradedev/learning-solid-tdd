@@ -1,4 +1,4 @@
-import { Entity } from "./entity";
+import { Entity } from "@/shared/core/entity";
 
 export type QuizProps = {
     title: string,
