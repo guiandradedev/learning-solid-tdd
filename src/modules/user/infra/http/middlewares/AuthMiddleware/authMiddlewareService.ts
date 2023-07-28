@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { SecurityAdapter } from "@/modules/user/adapters";
+import { ISecurityAdapter } from "@/modules/user/adapters";
 import { AppError, ErrServerError, ErrInvalidParam, ErrNotFound, ErrNotActive } from "@/shared/errors";
 import { IUsersRepository } from "@/modules/user/repositories";
 import { User } from "@/modules/user/domain";
@@ -15,7 +15,7 @@ export class AuthMiddlewareService {
         private usersRepository: IUsersRepository,
 
         @inject('SecurityAdapter')
-        private securityAdapter: SecurityAdapter
+        private securityAdapter: ISecurityAdapter
     ) { }
 
     async execute({ token }: AuthMiddlewareDTO): Promise<User> {

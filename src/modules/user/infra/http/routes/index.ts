@@ -1,2 +1,2 @@
-export * as Auth from './auth'
-export * as User from './user'
+export * as Auth from './auth.routes'
+export * as User from './user.routes'

@@ -1,22 +1,14 @@
 import { container } from "tsyringe";
-
-
-import { IQuizRepository } from "../../application/repositories/IQuizRepository";
-import { IQuestionRepository } from "../../application/repositories/IQuestionRepository";
-import { ISubmissionRepository } from "../../application/repositories/ISubmissionRepository";
-
-import { IHashAdapter, BcryptHashAdapter } from "../../modules/user/adapters/hash";
-import { JwtSecurityAdapter, SecurityAdapter } from "../../modules/user/adapters/security";
-import { MailAdapter } from "../../modules/user/adapters/mail";
-import { NodemailerMailAdapter } from "../../modules/user/adapters/mail/NodemailerMailAdapter";
-import { InMemoryQuestionsRepository, InMemoryQuizRepository, InMemorySubmissionsRepository, InMemoryUserCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository } from "@/tests/repositories";
-import { PrismaUserCodeRepository } from "@/modules/user/infra/repositories/PrismaUserCodeRepository";
-import { PrismaQuizRepository } from "@/infra/repositories/Prisma/PrismaQuizRepository";
-import { PrismaQuestionRepository } from "@/infra/repositories/Prisma/PrismaQuestionRepository";
-import { PrismaSubmissionRepository } from "@/infra/repositories/Prisma/PrismaSubmissionRepository";
+import { PrismaQuestionRepository } from "@/modules/quiz/infra/repositories/Prisma/PrismaQuestionRepository";
+import { PrismaQuizRepository } from "@/modules/quiz/infra/repositories/Prisma/PrismaQuizRepository";
+import { PrismaSubmissionRepository } from "@/modules/quiz/infra/repositories/Prisma/PrismaSubmissionRepository";
+import { IQuestionRepository, IQuizRepository, ISubmissionRepository } from "@/modules/quiz/repositories";
+import { BcryptHashAdapter, IHashAdapter, IMailAdapter, ISecurityAdapter, JwtSecurityAdapter } from "@/modules/user/adapters";
+import { NodemailerMailAdapter } from "@/modules/user/adapters/mail/NodemailerMailAdapter";
+import { PrismaUserCodeRepository } from "@/modules/user/infra/repositories/Prisma/PrismaUserCodeRepository";
+import { PrismaUserRepository } from "@/modules/user/infra/repositories/Prisma/PrismaUserRepository";
+import { PrismaUserTokenRepository } from "@/modules/user/infra/repositories/Prisma/PrismaUserTokenRepository";
 import { IUserCodeRepository, IUserTokenRepository, IUsersRepository } from "@/modules/user/repositories";
-import { PrismaUserRepository } from "@/modules/user/infra/repositories/PrismaUserRepository";
-import { PrismaUserTokenRepository } from "@/modules/user/infra/repositories/PrismaUserTokenRepository";
 
 //Repositories
 container.registerSingleton<IUsersRepository>(
@@ -56,13 +48,13 @@ container.registerInstance<IHashAdapter>(
     bcryptadapter
 )
 
-container.registerSingleton<SecurityAdapter>(
+container.registerSingleton<ISecurityAdapter>(
     "SecurityAdapter",
     JwtSecurityAdapter
 )
 
 const nodemaileradapter = new NodemailerMailAdapter()
-container.registerInstance<MailAdapter>(
+container.registerInstance<IMailAdapter>(
     "MailAdapter",
     nodemaileradapter
 )

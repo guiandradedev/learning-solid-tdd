@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { AppError, ErrInvalidParam, ErrNotFound, ErrServerError } from "../../../../../../shared/errors";
+import { AppError, ErrInvalidParam, ErrNotFound, ErrServerError } from "@/shared/errors";
 import { container } from "tsyringe";
 import { AuthMiddlewareService } from "./authMiddlewareService";
 

@@ -17,12 +17,10 @@
     "baseUrl": "src",
     "paths": {
       "@/types/*": ["@types/*"],
-      "@/application/*": ["application/*"],
-      "@/domain/*": ["domain/*"],
+      "@/modules/*": ["modules/*"],
       "@/infra/*": ["infra/*"],
       "@/shared/*": ["shared/*"],
-      "@/tests/*": ["tests/*"],
-      "@/modules/*": ["modules/*"]
+      "@/tests/*": ["tests/*"]
     },
     "outDir": "./dist",
     "strictNullChecks": false,
