@@ -59,7 +59,7 @@ export class CreateUserUseCase {
         })
         await this.userTokenRepository.create(userToken)
 
-        const newUserInstance = User.create({...user.props}, user.id)
+        const newUserInstance = User.create({ ...user.props }, user.id)
 
         const userReturn: UserAuthenticateResponse = Object.assign(newUserInstance, {
             token: {
@@ -68,10 +68,14 @@ export class CreateUserUseCase {
             }
         })
 
-        if(!active) {
+        if (!active) {
             const generateUserCode = new GenerateUserCode()
-            const {code, expiresIn} = generateUserCode.execute({ type: TypeCode.string, size: 6 })
-    
+
+            const date = new Date();
+            date.setHours(date.getHours() + 3);
+
+            const { code, expiresIn } = generateUserCode.execute({ type: TypeCode.string, size: 6, expiresIn: date })
+
             const userCode = UserCode.create({
                 active: true,
                 code,
@@ -81,9 +85,9 @@ export class CreateUserUseCase {
                 type: "ACTIVATE_ACCOUNT"
             })
             await this.UserCodeRepository.create(userCode)
-    
+
             const sendUserMail = new SendUserMail(this.mailAdapter)
-            await sendUserMail.authMail({to: email, code})
+            await sendUserMail.authMail({ to: email, code })
         }
 
         return userReturn;

@@ -81,7 +81,7 @@ describe("ActivateUserCode", () => {
 
         const generateActivateCode = vitest.spyOn(GenerateUserCode.prototype, 'execute')
         const date = new Date()
-        date.setDate(date.getDate() - 1)
+        date.setDate(date.getDate() - 3)
         generateActivateCode.mockImplementationOnce(() => { return { code: '', expiresIn: date } });
 
         const user = await sutUser.execute({
