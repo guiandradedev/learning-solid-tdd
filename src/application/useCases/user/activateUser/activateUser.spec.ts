@@ -7,13 +7,13 @@ import { InMemoryUserCodeRepository, InMemoryUserTokenRepository, InMemoryUsersR
 import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from "@/tests/adapters";
 import { UserCode, User } from '@/domain/entities';
 import { ActivateUserUseCase } from './activateUserUseCase';
-import { ErrInvalidParam, ErrNotFound } from '@/shared/errors';
+import { ErrAlreadyActive, ErrInvalidParam, ErrNotFound } from '@/shared/errors';
 import { GenerateUserCode } from '../../../services/GenerateUserCode';
 import { ErrExpired } from '@/shared/errors/ErrExpired';
 import { UserAuthenticateResponse } from '../authenticateUser/authenticateUserUseCase';
 
 describe("ActivateUserCode", () => {
-    const makeSut = async (): Promise<{ sut: ActivateUserUseCase, usersRepository: IUsersRepository, user: UserAuthenticateResponse, code: UserCode }> => {
+    const makeSut = async () => {
         const usersRepository = new InMemoryUsersRepository()
         const userTokenRepository = new InMemoryUserTokenRepository()
         const userCodeRepository = new InMemoryUserCodeRepository()
@@ -32,7 +32,7 @@ describe("ActivateUserCode", () => {
 
         const sut = new ActivateUserUseCase(usersRepository, userCodeRepository, mailAdapter)
 
-        return { sut, usersRepository, user, code }
+        return { sut, usersRepository, user, code, sutUser, userCodeRepository }
     }
     it('should activate an user if code is valid', async () => {
         const { sut, user, code, usersRepository } = await makeSut();
@@ -99,6 +99,24 @@ describe("ActivateUserCode", () => {
         })
 
         expect(activateCode).rejects.toBeInstanceOf(ErrExpired)
+
+    })
+
+    it('should throw an error if user already active', async () => {
+        const { sut, sutUser, userCodeRepository } = await makeSut();
+        const user = await sutUser.execute({
+            name: "Flaamer",
+            email: "teste1@teste.com",
+            password: "teste123",
+            active: true
+        })
+
+        const activateUser = sut.execute({
+            userId: user.id,
+            code: 'fake_code'
+        })
+
+        expect(activateUser).rejects.toBeInstanceOf(ErrAlreadyActive)
 
     })
 
