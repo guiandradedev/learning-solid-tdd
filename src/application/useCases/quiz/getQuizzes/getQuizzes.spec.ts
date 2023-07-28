@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import { InMemoryQuizRepository, InMemoryQuestionsRepository, InMemoryUsersRepository, InMemorySubmissionsRepository, InMemoryUserTokenRepository, InMemoryUserCodeRepository } from "../../../../tests/repositories";
 import { CreateQuizUseCase } from "../../quiz/createQuiz/createQuizUseCase";
 import { User, Quiz, Question } from "../../../../domain/entities";
-import { CreateUserUseCase } from "../../user/createUser/createUserUseCase";
+import { CreateUserUseCase } from "../../../../modules/user/services/createUser/createUserUseCase";
 import { GetQuizzesUseCase } from "./getQuizzesUseCase";
 import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from '../../../../tests/adapters';
 import { AppError } from '@/shared/errors';

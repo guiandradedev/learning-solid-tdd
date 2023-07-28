@@ -3,7 +3,7 @@ import 'dotenv/config'
 
 import { describe, expect, it } from "vitest";
 import { CreateQuizUseCase } from "../createQuiz/createQuizUseCase";
-import { CreateUserUseCase } from "../../user/createUser/createUserUseCase";
+import { CreateUserUseCase } from "../../../../modules/user/services/createUser/createUserUseCase";
 import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from '@/tests/adapters';
 import { InMemoryUserCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository, InMemoryQuizRepository, InMemoryQuestionsRepository, InMemorySubmissionsRepository } from '@/tests/repositories';
 import { AppError } from '@/shared/errors';

@@ -1,5 +1,5 @@
 import { IQuizRepository, QuizRequestRepository } from "../../application/repositories/IQuizRepository";
-import { Quiz } from "../../domain/entities";
+import { Quiz } from "@/modules/quiz/domain";
 
 export class InMemoryQuizRepository implements IQuizRepository {
     public quizzes: Quiz[] = []

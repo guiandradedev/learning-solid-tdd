@@ -2,7 +2,7 @@ import 'reflect-metadata'
 import 'dotenv/config'
 import { describe, expect, it } from "vitest";
 
-import { CreateUserUseCase } from "../../user/createUser/createUserUseCase";
+import { CreateUserUseCase } from "../../../../modules/user/services/createUser/createUserUseCase";
 import { CreateQuizUseCase } from "../createQuiz/createQuizUseCase";
 import { CreateSubmissionUseCase } from "./createSubmissionUseCase";
 import { Submission } from "../../../../domain/entities";

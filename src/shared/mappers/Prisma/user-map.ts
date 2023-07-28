@@ -1,4 +1,4 @@
-import { TypesUserCode, User, UserCode } from "@/domain/entities"
+import { TypesUserCode, User, UserCode } from "@/modules/user/domain"
 import { User as prismaUser, UserCode as prismaUserCode } from "@prisma/client"
 
 const prismaUserToEntity = (u: prismaUser): User => {

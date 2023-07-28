@@ -1,5 +1,5 @@
 import { ISubmissionRepository, SubmissionRequestRepository } from "../../application/repositories/ISubmissionRepository";
-import { Submission } from "../../domain/entities/submission";
+import { Submission } from "@/modules/quiz/domain";
 
 export class InMemorySubmissionsRepository implements ISubmissionRepository {
     private submissions: Submission[] = []

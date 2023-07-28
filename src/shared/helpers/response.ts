@@ -1,5 +1,5 @@
-import { UserAuthenticateResponse } from "@/application/useCases/user/authenticateUser/authenticateUserUseCase"
-import { User } from "@/domain/entities"
+import { User } from "@/modules/user/domain"
+import { UserAuthenticateResponse } from "@/modules/user/protocols"
 
 export interface ResponseAdapter {
     id: string,

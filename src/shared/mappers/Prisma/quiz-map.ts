@@ -1,5 +1,5 @@
 import { Quiz as prismaQuiz } from "@prisma/client"
-import { Quiz } from "../../../domain/entities/quiz"
+import { Quiz } from "@/modules/quiz/domain"
 
 const prismaQuizToEntity = (u: prismaQuiz): Quiz => {
     const user = Quiz.create({

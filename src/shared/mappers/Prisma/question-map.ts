@@ -1,5 +1,5 @@
 import { Prisma, Question as prismaQuestion } from "@prisma/client"
-import { Question } from "../../../domain/entities"
+import { Question } from "@/modules/quiz/domain"
 
 export type PrismaQuestionWithAnswers = Prisma.QuestionGetPayload<{
     include: {answers: true}

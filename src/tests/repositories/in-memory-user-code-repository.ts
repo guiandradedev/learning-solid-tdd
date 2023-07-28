@@ -1,5 +1,5 @@
-import { FindByCode, FindByCodeAndUserId, FindCodeByUserId, IUserCodeRepository } from "../../application/repositories";
-import { UserCode } from "../../domain/entities";
+import { IUserCodeRepository, FindByCode, FindByCodeAndUserId, FindCodeByUserId } from "@/modules/user/repositories";
+import { UserCode } from "@/modules/user/domain";
 
 export class InMemoryUserCodeRepository implements IUserCodeRepository {
     public codes: UserCode[] = []

@@ -4,7 +4,7 @@ import 'dotenv/config'
 import { it, expect, describe } from "vitest";
 import { CreateQuizProps, CreateQuizUseCase } from "./createQuizUseCase";
 import { Quiz } from "../../../../domain/entities";
-import { CreateUserUseCase } from "../../user/createUser/createUserUseCase";
+import { CreateUserUseCase } from "../../../../modules/user/services/createUser/createUserUseCase";
 import { IQuizRepository, IQuestionRepository } from "../../../repositories";
 import { ErrInvalidParam, ErrNotFound } from '../../../../shared/errors';
 import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from '../../../../tests/adapters';

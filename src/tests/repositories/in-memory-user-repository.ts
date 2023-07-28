@@ -1,5 +1,5 @@
-import { IUsersRepository, TypeChangeUserPassword } from "../../application/repositories/IUsersRepository";
-import { User } from "../../domain/entities";
+import { User } from "@/modules/user/domain";
+import { IUsersRepository, TypeChangeUserPassword } from "@/modules/user/repositories";
 
 export class InMemoryUsersRepository implements IUsersRepository {
     public users: User[] = []

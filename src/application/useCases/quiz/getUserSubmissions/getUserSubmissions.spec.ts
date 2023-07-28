@@ -4,7 +4,7 @@ import 'reflect-metadata'
 import { describe, expect, expectTypeOf, it } from "vitest";
 import { InMemorySubmissionsRepository, InMemoryUsersRepository,    InMemoryQuizRepository,    InMemoryQuestionsRepository,    InMemoryUserTokenRepository, InMemoryUserCodeRepository } from "../../../../tests/repositories";
 import { CreateSubmissionUseCase } from "../../quiz/createSubmission/createSubmissionUseCase";
-import { CreateUserUseCase } from "../../user/createUser/createUserUseCase";
+import { CreateUserUseCase } from "../../../../modules/user/services/createUser/createUserUseCase";
 import { CreateQuizUseCase } from "../../quiz/createQuiz/createQuizUseCase";
 import { GetUserSubmissionsUseCase } from "./getUserSubmissionsUseCase";
 import { User, Submission } from "../../../../domain/entities";

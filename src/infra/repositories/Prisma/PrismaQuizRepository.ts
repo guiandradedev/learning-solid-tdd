@@ -1,7 +1,7 @@
 import { IQuizRepository, QuizRequestRepository } from "../../../application/repositories/IQuizRepository";
 import { Quiz } from "../../../domain/entities/quiz";
 import { prismaQuizToEntity } from "../../../shared/mappers/Prisma/quiz-map";
-import { prismaClient } from "../../../shared/providers/database/prisma";
+import { prismaClient } from "../../../shared/adapters/database/prisma";
 
 
 export class PrismaQuizRepository implements IQuizRepository {

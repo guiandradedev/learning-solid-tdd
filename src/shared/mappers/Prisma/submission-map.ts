@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client"
-import { Submission } from "../../../domain/entities/submission"
+import { Submission } from "@/modules/quiz/domain"
 
 export type PrismaSubmissionWithAnswers = Prisma.SubmissionGetPayload<{
     include: {SubmissionAnswers: true}

@@ -1,4 +1,4 @@
-import { SecurityDecryptResponse, SecurityAdapter } from "../../shared/adapters";
+import { SecurityDecryptResponse, ISecurityAdapter } from "@/modules/user/adapters";
 import { v4 as uuidv4 } from 'uuid'
 
 interface EncryptOptions {
@@ -10,14 +10,14 @@ interface Tokens extends SecurityDecryptResponse {
     id: string
 }
 
-export class InMemorySecurityAdapter implements SecurityAdapter {
+export class InMemorySecurityAdapter implements ISecurityAdapter {
     private tokens: Tokens[] = []
     encrypt(data: any, secret: string, options: EncryptOptions): string {
-        const token = {
+        const token: Tokens = {
             id: uuidv4(),
             subject: options.subject,
-            expiresIn: Date.now() + Number(options.expiresIn),
-            issuedAt: Date.now()
+            expiresIn: new Date(Date.now() + Number(options.expiresIn)),
+            issuedAt: new Date()
         }
         this.tokens.push(token)
         return token.id;
