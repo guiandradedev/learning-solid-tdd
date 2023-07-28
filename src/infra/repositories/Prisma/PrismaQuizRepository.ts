@@ -21,8 +21,12 @@ export class PrismaQuizRepository implements IQuizRepository {
         await prismaClient.quiz.create({ data: {...data.props, id: data.id} })
     }
 
-    async list(request?: QuizRequestRepository | undefined): Promise<Quiz[] | null> {
-        return null
+    async list(request?: QuizRequestRepository | undefined): Promise<Quiz[]> {
+        const quizzes = await prismaClient.quiz.findMany()
+
+        if(!quizzes || quizzes.length == 0) return null
+
+        return quizzes.map(prismaQuizToEntity)
     }
 
 }

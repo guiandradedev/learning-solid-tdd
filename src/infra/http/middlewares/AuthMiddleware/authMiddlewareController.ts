@@ -20,7 +20,7 @@ export class AuthMiddlewareController {
 
             if (!user) return res.status(new ErrNotFound('user').status).send({ errors: [new ErrNotFound('user')] });
 
-            res.locals.user = user;
+            req.user = user
 
             next();
         } catch (error) {

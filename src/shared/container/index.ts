@@ -19,6 +19,9 @@ import { NodemailerMailAdapter } from "../adapters/mail/NodemailerMailAdapter";
 import { InMemoryQuestionsRepository, InMemoryQuizRepository, InMemorySubmissionsRepository, InMemoryUserCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository } from "@/tests/repositories";
 import { IUserCodeRepository } from "@/application/repositories";
 import { PrismaUserCodeRepository } from "@/infra/repositories/Prisma/PrismaUserCodeRepository";
+import { PrismaQuizRepository } from "@/infra/repositories/Prisma/PrismaQuizRepository";
+import { PrismaQuestionRepository } from "@/infra/repositories/Prisma/PrismaQuestionRepository";
+import { PrismaSubmissionRepository } from "@/infra/repositories/Prisma/PrismaSubmissionRepository";
 
 //Repositories
 container.registerSingleton<IUsersRepository>(
@@ -28,12 +31,12 @@ container.registerSingleton<IUsersRepository>(
 
 container.registerSingleton<IQuizRepository>(
     "QuizRepository",
-    InMemoryQuizRepository
+    PrismaQuizRepository
 )
 
 container.registerSingleton<IQuestionRepository>(
     "QuestionRepository",
-    InMemoryQuestionsRepository
+    PrismaQuestionRepository
 )
 
 container.registerSingleton<IUserTokenRepository>(
@@ -43,7 +46,7 @@ container.registerSingleton<IUserTokenRepository>(
 
 container.registerSingleton<ISubmissionRepository>(
     "SubmissionRepository",
-    InMemorySubmissionsRepository
+    PrismaSubmissionRepository
 )
 
 container.registerSingleton<IUserCodeRepository>(
