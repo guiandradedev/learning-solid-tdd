@@ -2,7 +2,7 @@ import { inject, injectable } from "tsyringe";
 import { IUserTokenRepository, IUsersRepository } from "../../../repositories";
 import { CreateSession } from "../../../services/Session/SessionService";
 import { User, UserToken } from "../../../../domain/entities";
-import { ErrNotFound, ErrNotActive } from "../../../../shared/errors";
+import { ErrNotFound, ErrNotActive, ErrInvalidParam } from "../../../../shared/errors";
 import { HashAdapter, SecurityAdapter } from "../../../../shared/adapters";
 
 export type AuthenticateUserRequest = {
@@ -37,10 +37,10 @@ export class AuthenticateUserUseCase {
     async execute({ email, password }: AuthenticateUserRequest): Promise<UserAuthenticateResponse> {
         const user = await this.userRepository.findByEmail(email)
 
-        if (!user) throw new ErrNotFound('user')
+        if (!user) throw new ErrInvalidParam('email or password incorrect')
 
         const checkPassword = await this.hashAdapter.compare(password, user.props.password);
-        if (!checkPassword) throw new ErrNotFound('user')
+        if (!checkPassword) throw new ErrInvalidParam('email or password incorrect')
 
         if(!user.props.active) throw new ErrNotActive('user')
 

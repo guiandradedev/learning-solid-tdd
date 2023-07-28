@@ -2,7 +2,7 @@ import 'reflect-metadata'
 import 'dotenv/config'
 
 import { describe, expect, it } from "vitest";
-import { ErrNotActive, ErrNotFound } from '@/shared/errors';
+import { ErrNotActive, ErrInvalidParam } from '@/shared/errors';
 import { InMemoryUserCodeRepository, InMemoryUserTokenRepository, InMemoryUsersRepository } from "@/tests/repositories";
 import { AuthenticateUserUseCase, UserTokenResponse } from "./authenticateUserUseCase";
 import { CreateUserUseCase } from "../createUser/createUserUseCase";
@@ -69,7 +69,7 @@ describe('Authentication', async () => {
         }
 
         expect(async () => await sut.execute(dataObj)).not.toBeInstanceOf(User)
-        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(ErrNotFound)
+        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(ErrInvalidParam)
     })
 
     it('Should throw an error if password != user.password', async () => {
@@ -88,7 +88,7 @@ describe('Authentication', async () => {
         }
 
         expect(async () => await sut.execute(dataObj)).not.toBeInstanceOf(User)
-        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(ErrNotFound)
+        expect(async () => await sut.execute(dataObj)).rejects.toBeInstanceOf(ErrInvalidParam)
     })
 
     it('should return an access and refresh token', async () => {
