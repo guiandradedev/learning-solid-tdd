@@ -29,7 +29,7 @@ export class PrismaSubmissionRepository implements ISubmissionRepository {
             const answerData = {
                 id: uuidv4(),
                 submissionId: data.id,
-                answer,
+                answer: Number(answer),
                 correct: Boolean(data.props.correctAnswers[index])
             }
             answersData.push(answerData)

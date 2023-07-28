@@ -86,7 +86,7 @@ model Submission {
 model SubmissionAnswers {
     id           String  @id
     submissionId String
-    answer       String
+    answer       Int
     correct      Boolean
 
     submission Submission @relation(fields: [submissionId], references: [id])
