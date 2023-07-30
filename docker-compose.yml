@@ -8,9 +8,6 @@ services:
     container_name: Quiz
     command: npm run dev
     restart: unless-stopped
-    environment:
-      token: ''
-      mongodb: ''
     ports:
       - "3000:3000"
     deploy:
