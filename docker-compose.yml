@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+    app_database:
+        image: postgres:alpine
+        restart: always
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: app_database
+        ports:
+            - 5432:5432
+        volumes:
+            - app_database:/var/lib/postgresql/data
+
+
+volumes:
+    app_database:
+        driver: local
