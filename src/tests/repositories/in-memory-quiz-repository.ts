@@ -1,4 +1,4 @@
-import { IQuizRepository, QuizRequestRepository } from "../../application/repositories/IQuizRepository";
+import { IQuizRepository, QuizRequestRepository } from "@/modules/quiz/repositories/IQuizRepository";
 import { Quiz } from "@/modules/quiz/domain";
 
 export class InMemoryQuizRepository implements IQuizRepository {

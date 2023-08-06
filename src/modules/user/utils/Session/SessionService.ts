@@ -1,12 +1,12 @@
 import 'reflect-metadata'
 
 import { ErrServerError } from '@/shared/errors';
-import { SecurityAdapter } from '@/modules/user/adapters';
-import { ITokens } from "../../../../@types/token.types";
+import { ISecurityAdapter } from '@/modules/user/adapters';
+import { ITokens } from "@/types/token.types";
 
 class CreateSession {
     constructor(
-        private securityAdapter: SecurityAdapter
+        private securityAdapter: ISecurityAdapter
     ) { }
     async execute(email: string, _id: string): Promise<ITokens> {
         try {

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { validationResult } from 'express-validator'
-import { deleteFile } from '../../../shared/utils/file'
-import { IError } from '../../../@types/error.types'
+import { deleteFile } from '@/shared/utils/file'
+import { IError } from '@/types/error.types'
 import { ErrInvalidParam } from '@/shared/errors'
 
 export const validateRules = (req: Request, res: Response, next: NextFunction) => {

@@ -1,4 +1,4 @@
-import { IError } from "../../@types/error.types";
+import { IError } from "@/types/error.types";
 
 export class AppError extends Error{
     public readonly status: number;

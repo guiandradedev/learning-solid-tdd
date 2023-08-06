@@ -1,8 +1,8 @@
 import 'dotenv/config'
 import { describe, expect, it } from "vitest";
 import { CreateSession } from "./SessionService";
-import { ISecurityAdapter, SecurityDecryptResponse } from '../../adapters';
-import { InMemorySecurityAdapter } from '../../../../tests/adapters/InMemorySecurityAdapter';
+import { ISecurityAdapter, SecurityDecryptResponse } from '@/modules/user/adapters';
+import { InMemorySecurityAdapter } from '@/tests/adapters/InMemorySecurityAdapter';
 
 describe("Session Service", async () => {
     type TypeSut = {
@@ -19,8 +19,6 @@ describe("Session Service", async () => {
         const { accessToken, refreshToken } = await createSession.execute('fake_email@email.com', userId)
 
         const verifyAccess = securityAdapter.decrypt(accessToken, process.env.ACCESS_TOKEN)
-
-        console.log(verifyAccess.issuedAt, Date.now())
 
         expect(verifyAccess).toMatchObject<SecurityDecryptResponse>({
             expiresIn: expect.any(Date),

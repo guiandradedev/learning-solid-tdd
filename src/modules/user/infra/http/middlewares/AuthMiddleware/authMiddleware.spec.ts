@@ -6,7 +6,7 @@ import { InMemoryUserCodeRepository, InMemoryUserTokenRepository, InMemoryUsersR
 import { InMemoryHashAdapter, InMemoryMailAdapter, InMemorySecurityAdapter } from "@/tests/adapters";
 import { CreateUserUseCase } from "@/modules/user/services/createUser/createUserUseCase";
 import { User } from "@/modules/user/domain";
-import { SecurityAdapter } from '@/modules/user/adapters';
+import { ISecurityAdapter } from '@/modules/user/adapters';
 import { IUsersRepository } from '@/modules/user/repositories';
 import { v4 as uuidv4 } from 'uuid';
 import { ErrInvalidParam, ErrNotActive, ErrNotFound } from '@/shared/errors';
@@ -15,7 +15,7 @@ import { UserAuthenticateResponse } from '@/modules/user/protocols';
 describe("AuthMiddlewareService", () => {
     type TypeSut = {
         usersRepository: IUsersRepository
-        securityAdapter: SecurityAdapter
+        securityAdapter: ISecurityAdapter
         userSut: CreateUserUseCase
         user: UserAuthenticateResponse,
         sut: AuthMiddlewareService

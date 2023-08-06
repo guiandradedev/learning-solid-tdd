@@ -1,4 +1,4 @@
-import { ISubmissionRepository, SubmissionRequestRepository } from "../../application/repositories/ISubmissionRepository";
+import { ISubmissionRepository, SubmissionRequestRepository } from "@/modules/quiz/repositories/ISubmissionRepository";
 import { Submission } from "@/modules/quiz/domain";
 
 export class InMemorySubmissionsRepository implements ISubmissionRepository {
